@@ -1,0 +1,4 @@
+product_id,variant_id,sku,category_level3_id,material,style,usage_area,stock,country_code,currency,b2c_price,b2b_price,min_order_b2b
+prd-001,var-001,LUN-3S-GRY,cat-l3-uclu-koltuk,Masif Ahsap,Modern,Salon,36,TR,TRY,28500,23900,5
+prd-001,var-001,LUN-3S-GRY,cat-l3-uclu-koltuk,Masif Ahsap,Modern,Salon,36,DE,EUR,990,820,10
+prd-002,var-003,NOV-TBL-160,cat-l3-yemek-masasi,MDF,Minimal,Yemek Odasi,42,TR,TRY,19800,16500,4
