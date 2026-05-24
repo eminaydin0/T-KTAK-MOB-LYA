@@ -8,7 +8,43 @@ import { BackToTop } from '../components/BackToTop'
 import { CartPreviewModal } from '../components/CartPreviewModal'
 import { SocialLinks } from '../components/SocialLinks'
 import { SiteNavCategoryMenu } from '../components/SiteNavCategoryMenu'
-import { cartPath, categoryPath, checkoutPath } from '../sitePaths'
+import { cartPath, categoryPath, checkoutPath, packagesAnchor } from '../sitePaths'
+
+function isAdminNavHref(href: string) {
+  const path = href.split('#')[0].replace(/\/$/, '') || '/'
+  return path === '/admin' || path.startsWith('/admin/')
+}
+
+function navItemActive(href: string, pathname: string, hash: string) {
+  const [pathPart, hashPart] = href.split('#')
+  const path = pathPart.replace(/\/$/, '') || '/'
+  if (hashPart) {
+    return pathname === (path || '/') && hash === `#${hashPart}`
+  }
+  if (path === '/') return pathname === '/' && !hash
+  return pathname === path || pathname.startsWith(`${path}/`)
+}
+
+function navLinkClassName(href: string, pathname: string, hash: string, extra = '') {
+  const active = navItemActive(href, pathname, hash)
+  return ['site-nav-link', active ? 'site-nav-link--active' : '', extra].filter(Boolean).join(' ')
+}
+
+function IconCart({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9" cy="20" r="1" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="20" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
 
 function isExternal(href: string) {
   return (
@@ -42,11 +78,23 @@ export function SiteLayout() {
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const headerNav = useMemo(
-    () =>
-      [...navigation].filter((n) => n.placement === 'header').sort((a, b) => a.order - b.order),
-    [navigation]
-  )
+  const headerNav = useMemo(() => {
+    const items = [...navigation]
+      .filter((n) => n.placement === 'header' && !isAdminNavHref(n.href))
+      .sort((a, b) => a.order - b.order)
+    const hasPackages = items.some((n) => n.href === packagesAnchor() || n.href.includes('#packages'))
+    if (!hasPackages) {
+      items.push({
+        id: 'builtin-nav-packages',
+        label: 'Paketler',
+        href: packagesAnchor(),
+        openInNewTab: false,
+        order: 98,
+        placement: 'header',
+      })
+    }
+    return items.sort((a, b) => a.order - b.order)
+  }, [navigation])
   const footerNav = useMemo(
     () =>
       [...navigation].filter((n) => n.placement === 'footer').sort((a, b) => a.order - b.order),
@@ -121,100 +169,101 @@ export function SiteLayout() {
           <span>
             <span className="font-semibold text-cotta">Müşteri hattı</span>
             <span className="mx-2 text-stone-300">·</span>
-            {settings.contactPhone}
+            <a href={`tel:${settings.contactPhone.replace(/\s/g, '')}`} className="hover:text-ink">
+              {settings.contactPhone}
+            </a>
           </span>
         ) : (
           <span>Ücretsiz keşif ve randevu için iletişime geçin</span>
         )}
       </div>
 
-      <header className="sticky top-0 z-50 bg-white/90 shadow-soft backdrop-blur-md">
-            <div className="mx-auto grid max-w-site grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-3.5 sm:px-8">
-              <div className="flex min-w-0 items-center justify-start gap-4 lg:gap-8">
-                <button
-                  type="button"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-700 ring-1 ring-line lg:hidden"
-                  aria-expanded={mobileOpen}
-                  aria-controls="site-mobile-nav"
-                  aria-label={mobileOpen ? 'Menüyü kapat' : 'Menü'}
-                  onClick={() => setMobileOpen((o) => !o)}
-                >
-                  <span className="flex flex-col gap-1.5" aria-hidden>
-                    <span className="h-px w-5 bg-current" />
-                    <span className="h-px w-5 bg-current" />
-                    <span className="h-px w-5 bg-current" />
-                  </span>
-                </button>
-                <nav className="hidden min-w-0 items-center gap-6 lg:flex xl:gap-8" aria-label="Ana menü">
-                  {headerNav.map((item) =>
-                    isExternal(item.href) ? (
-                      <a
-                        key={item.id}
-                        href={item.href}
-                        className="site-nav-link"
-                        {...(item.openInNewTab ? { target: '_blank', rel: 'noreferrer' } : {})}
-                      >
-                        {item.label}
-                      </a>
-                    ) : (
-                      <Link key={item.id} to={item.href || '/'} className="site-nav-link">
-                        {item.label}
-                      </Link>
-                    )
-                  )}
-                </nav>
-              </div>
+      <header className="sticky top-0 z-50 border-b border-line/60 bg-white/92 shadow-soft backdrop-blur-md">
+        <div className="mx-auto grid max-w-site grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-3 sm:px-8">
+          <div className="flex min-w-0 items-center justify-start gap-3 lg:gap-6">
+            <button
+              type="button"
+              className="site-btn-icon shrink-0 lg:hidden"
+              aria-expanded={mobileOpen}
+              aria-controls="site-mobile-nav"
+              aria-label={mobileOpen ? 'Menüyü kapat' : 'Menü'}
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              <span className="flex flex-col gap-1.5" aria-hidden>
+                <span className="h-px w-4 bg-current" />
+                <span className="h-px w-4 bg-current" />
+                <span className="h-px w-4 bg-current" />
+              </span>
+            </button>
+            <nav className="hidden min-w-0 items-center gap-5 lg:flex xl:gap-7" aria-label="Ana menü">
+              {headerNav.map((item) => {
+                const className = navLinkClassName(item.href, location.pathname, location.hash)
+                return isExternal(item.href) ? (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    className={className}
+                    {...(item.openInNewTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link key={item.id} to={item.href || '/'} className={className}>
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
 
-              <div className="justify-self-center px-1">
-                <SiteBrandMark name={settings.siteName || 'Vitrin'} />
-              </div>
+          <div className="justify-self-center px-1">
+            <SiteBrandMark name={settings.siteName || 'Vitrin'} />
+          </div>
 
-              <div className="flex items-center justify-end gap-2 sm:gap-2.5">
-                <div className="hidden sm:block">
-                  <SiteNavCategoryMenu categories={categoriesWithCount} />
-                </div>
-                <button
-                  type="button"
-                  className="relative site-btn-ghost px-4 py-2"
-                  onClick={() => openPreview()}
-                  aria-label={`Sepet, ${totalItems} ürün`}
-                >
-                  Sepet
-                  {totalItems > 0 ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cotta px-1 text-[10px] font-medium leading-none text-white">
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </span>
-                  ) : null}
-                </button>
-                <Link
-                  to="/#catalog"
-                  className="relative hidden site-btn-ghost px-4 py-2 sm:inline-flex"
-                >
-                  Katalog
-                </Link>
-                {enabledLangs.length > 1 ? (
-                  <label className="hidden items-center gap-1 lg:flex">
-                    <select
-                      value={activeLocale}
-                      onChange={(e) => setActiveLocale(e.target.value)}
-                      className="site-input py-2 text-xs shadow-soft"
-                    >
-                      {enabledLangs.map((l) => (
-                        <option key={l.code} value={l.code}>
-                          {l.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ) : null}
-                <Link
-                  to="/admin"
-                  className="site-btn-ghost hidden px-3 py-2 text-stone-500 sm:inline-flex"
-                >
-                  Yönetim
-                </Link>
-              </div>
+          <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+            <div className="hidden md:block">
+              <SiteNavCategoryMenu categories={categoriesWithCount} />
             </div>
+            <button
+              type="button"
+              className="relative site-btn-icon"
+              onClick={() => openPreview()}
+              aria-label={totalItems > 0 ? `Sepet, ${totalItems} ürün` : 'Sepeti aç'}
+            >
+              <IconCart />
+              {totalItems > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cotta px-1 text-[10px] font-semibold leading-none text-white">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              ) : null}
+            </button>
+            <Link to={cartPath()} className="site-btn-ghost hidden px-3 py-2 text-xs sm:inline-flex">
+              Sepet
+            </Link>
+            <Link
+              to="/iletisim"
+              className="site-btn-accent hidden px-4 py-2 text-xs md:inline-flex"
+            >
+              Teklif al
+            </Link>
+            {enabledLangs.length > 1 ? (
+              <label className="hidden items-center lg:flex">
+                <select
+                  value={activeLocale}
+                  onChange={(e) => setActiveLocale(e.target.value)}
+                  className="site-input py-2 text-xs shadow-soft"
+                  aria-label="Dil"
+                >
+                  {enabledLangs.map((l) => (
+                    <option key={l.code} value={l.code}>
+                      {l.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+          </div>
+        </div>
       </header>
 
       {mobileOpen ? (
@@ -241,65 +290,67 @@ export function SiteLayout() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto px-5 py-4">
-              <nav className="flex flex-col gap-1" aria-label="Mobil menü">
-                {headerNav.map((item) =>
-                  isExternal(item.href) ? (
+              <nav className="flex flex-col gap-0.5" aria-label="Mobil menü">
+                {headerNav.map((item) => {
+                  const className = navLinkClassName(
+                    item.href,
+                    location.pathname,
+                    location.hash,
+                    'site-divide-b py-3'
+                  )
+                  return isExternal(item.href) ? (
                     <a
                       key={item.id}
                       href={item.href}
-                      className="site-divide-b py-3 text-sm font-medium text-stone-700"
+                      className={className}
                       {...(item.openInNewTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                     >
                       {item.label}
                     </a>
                   ) : (
-                    <Link
-                      key={item.id}
-                      to={item.href || '/'}
-                      className="site-divide-b py-3 text-sm font-medium text-stone-700"
-                    >
+                    <Link key={item.id} to={item.href || '/'} className={className}>
                       {item.label}
                     </Link>
                   )
-                )}
+                })}
+              </nav>
+
+              <div className="mt-4 space-y-2">
                 <button
                   type="button"
-                  className="site-btn-accent mt-3 w-full py-3"
+                  className="site-btn-accent flex w-full items-center justify-center gap-2 py-3"
                   onClick={() => {
                     setMobileOpen(false)
                     openPreview()
                   }}
                 >
+                  <IconCart className="h-5 w-5" />
                   Sepet {totalItems > 0 ? `(${totalItems})` : ''}
                 </button>
                 <Link
-                  to={checkoutPath()}
-                  className="site-btn-ghost w-full py-3"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Ödeme
-                </Link>
-                <Link
                   to={cartPath()}
-                  className="site-btn-ghost w-full py-3"
+                  className="site-btn-ghost w-full py-3 text-center"
                   onClick={() => setMobileOpen(false)}
                 >
                   Sepet sayfası
                 </Link>
+                {totalItems > 0 ? (
+                  <Link
+                    to={checkoutPath()}
+                    className="site-btn-ghost w-full py-3 text-center"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Ödemeye geç
+                  </Link>
+                ) : null}
                 <Link
-                  to="/#catalog"
-                  className="site-btn-ghost w-full py-3"
+                  to="/iletisim"
+                  className="site-btn-ghost w-full py-3 text-center"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Katalog
+                  Teklif & iletişim
                 </Link>
-                <Link
-                  to="/admin"
-                  className="site-btn-ghost w-full py-3 text-stone-500"
-                >
-                  Yönetim
-                </Link>
-              </nav>
+              </div>
 
               {categoriesWithCount.length > 0 ? (
                 <div className="mt-8 border-t border-line pt-6">

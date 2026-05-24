@@ -55,6 +55,10 @@
     @apply text-sm font-medium text-stone-600 transition duration-site ease-site hover:text-ink;
   }
 
+  .site-nav-link--active {
+    @apply text-ink;
+  }
+
   .site-topbar {
     @apply bg-surface-muted/80 py-2 text-center text-xs text-stone-500;
   }

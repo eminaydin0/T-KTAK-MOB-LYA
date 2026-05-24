@@ -75,10 +75,18 @@ export const defaultNavigation: SiteNavItem[] = [
   },
   {
     id: 'seed-nav-h3',
-    label: 'Yonetim',
-    href: '/admin',
+    label: 'Paketler',
+    href: '/#packages',
     openInNewTab: false,
     order: 2,
+    placement: 'header',
+  },
+  {
+    id: 'seed-nav-h4',
+    label: 'İletişim',
+    href: '/iletisim',
+    openInNewTab: false,
+    order: 3,
     placement: 'header',
   },
   {
