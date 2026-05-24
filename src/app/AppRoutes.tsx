@@ -10,15 +10,21 @@ import { AdminLoginPage } from '../admin/pages/AdminLoginPage'
 import { AdminMediaPage } from '../admin/pages/AdminMediaPage'
 import { AdminNavigationPage } from '../admin/pages/AdminNavigationPage'
 import { AdminOrdersPage } from '../admin/pages/AdminOrdersPage'
+import { AdminPackagesPage } from '../admin/pages/AdminPackagesPage'
 import { AdminProductsPage } from '../admin/pages/AdminProductsPage'
 import { AdminSecurityPage } from '../admin/pages/AdminSecurityPage'
 import { AdminSettingsPage } from '../admin/pages/AdminSettingsPage'
 import { SiteLayout } from '../site/layouts/SiteLayout'
+import { CartPage } from '../site/pages/CartPage'
 import { CategoryPage } from '../site/pages/CategoryPage'
+import { CheckoutPage } from '../site/pages/CheckoutPage'
+import { CheckoutSuccessPage } from '../site/pages/CheckoutSuccessPage'
 import { ContactPage } from '../site/pages/ContactPage'
+import { DenePage } from '../site/pages/DenePage'
 import { GizlilikPage } from '../site/pages/GizlilikPage'
 import { HomePage } from '../site/pages/HomePage'
 import { KvkkPage } from '../site/pages/KvkkPage'
+import { PackagePage } from '../site/pages/PackagePage'
 import { ProductDetailPage } from '../site/pages/ProductDetailPage'
 
 export function AppRoutes() {
@@ -27,9 +33,14 @@ export function AppRoutes() {
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
         <Route path="kategori/:categoryId" element={<CategoryPage />} />
+        <Route path="sepet" element={<CartPage />} />
+        <Route path="odeme" element={<CheckoutPage />} />
+        <Route path="odeme/basarili" element={<CheckoutSuccessPage />} />
+        <Route path="dene" element={<DenePage />} />
         <Route path="iletisim" element={<ContactPage />} />
         <Route path="gizlilik" element={<GizlilikPage />} />
         <Route path="kvkk" element={<KvkkPage />} />
+        <Route path="paket/:packageSlug" element={<PackagePage />} />
         <Route path="urun/:productId" element={<ProductDetailPage />} />
       </Route>
       <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -48,6 +59,7 @@ export function AppRoutes() {
         <Route path="media" element={<AdminMediaPage />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="products" element={<AdminProductsPage />} />
+        <Route path="packages" element={<AdminPackagesPage />} />
         <Route path="orders" element={<AdminOrdersPage />} />
         <Route path="languages" element={<AdminLanguagesPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />

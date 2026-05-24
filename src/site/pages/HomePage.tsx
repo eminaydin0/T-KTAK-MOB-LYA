@@ -6,6 +6,7 @@ import { useExchangeRate } from '../../lib/useExchangeRate'
 import { formatUsdAndTry } from '../../shared/formatPrice'
 import { HomeCarousel } from '../components/HomeCarousel'
 import { HomeCategoryBento } from '../components/HomeCategoryBento'
+import { HomePackageShowcase } from '../components/HomePackageShowcase'
 import { SiteProductCard } from '../components/SiteProductCard'
 import { categoryPath } from '../sitePaths'
 
@@ -79,6 +80,8 @@ export function HomePage() {
         title={content.categorySectionTitle}
         subtitle={content.categorySectionSubtitle}
       />
+
+      <HomePackageShowcase />
 
       {/* Katalog */}
       <section id="catalog" className="site-enter scroll-mt-24" aria-labelledby="catalog-heading">

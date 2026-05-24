@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { IconExternal, IconPanelLeft } from '../components/AdminNavIcons'
 import { AdminSidebar } from '../components/AdminSidebar'
 
 export function AdminLayout() {
   const location = useLocation()
+  const contentRef = useRef<HTMLDivElement>(null)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   useEffect(() => {
     setMobileNavOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    contentRef.current?.scrollTo(0, 0)
   }, [location.pathname])
 
   useEffect(() => {
@@ -82,7 +87,7 @@ export function AdminLayout() {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+          <div ref={contentRef} className="flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
             <Outlet />
           </div>
         </div>

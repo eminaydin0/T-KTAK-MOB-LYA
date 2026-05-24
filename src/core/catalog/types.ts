@@ -37,6 +37,31 @@ export type CatalogProduct = {
   leadTimeDays: number | null
   /** Kategoriye ozel soru cevaplari (soru id -> metin) */
   categoryAnswers: Record<string, string>
+  /** Bagli oldugu paket slug'lari (parca olarak satilir) */
+  packageSlugs?: string[]
+}
+
+/** Tam set veya parca parca satilan oda / dugun paketi */
+export type CatalogPackageKind = 'wedding' | 'living_room' | 'bedroom'
+
+export type CatalogPackage = {
+  id: number
+  slug: string
+  name: string
+  tagline: string
+  description: string
+  imageUrl?: string
+  kind: CatalogPackageKind
+  /** Pakete dahil urun id'leri — her biri ayri da satilir */
+  productIds: number[]
+  /** Tam set aliminda yuzde indirim (or. 10 = %10) */
+  bundleDiscountPercent: number
+}
+
+export const PACKAGE_KIND_LABEL: Record<CatalogPackageKind, string> = {
+  wedding: 'Düğün',
+  living_room: 'Oturma odası',
+  bedroom: 'Yatak odası',
 }
 
 export function productImageList(p: CatalogProduct): string[] {

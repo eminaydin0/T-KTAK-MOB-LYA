@@ -6,6 +6,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
+import type { OrderPayment } from '../payment/types'
 import type { CommChannel, Order, OrderCommunication, OrderLine, OrderStatus } from '../orders/types'
 import { loadOrders, nextReferenceCode, saveOrders } from '../orders/storage'
 import { useState } from 'react'
@@ -21,9 +22,12 @@ type OrdersContextValue = {
   addOrder: (input: {
     customerName: string
     phone: string
+    email?: string
+    shippingAddress?: string
     lines: { productId?: number; productName: string; qty: number }[]
     note?: string
-  }) => void
+    payment?: OrderPayment
+  }) => Order | null
 }
 
 const OrdersContext = createContext<OrdersContextValue | null>(null)
@@ -90,12 +94,15 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     (input: {
       customerName: string
       phone: string
+      email?: string
+      shippingAddress?: string
       lines: { productId?: number; productName: string; qty: number }[]
       note?: string
-    }) => {
+      payment?: OrderPayment
+    }): Order | null => {
       const name = input.customerName.trim()
       const phone = input.phone.trim()
-      if (!name || !phone || input.lines.length === 0) return
+      if (!name || !phone || input.lines.length === 0) return null
 
       const lines: OrderLine[] = input.lines
         .filter((l) => l.productName.trim() && l.qty > 0)
@@ -106,7 +113,10 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
           if (l.productId !== undefined) line.productId = l.productId
           return line
         })
-      if (lines.length === 0) return
+      if (lines.length === 0) return null
+
+      const email = input.email?.trim() || undefined
+      const shippingAddress = input.shippingAddress?.trim() || undefined
 
       const next: Order = {
         id: `ord-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -114,14 +124,18 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         createdAt: new Date().toISOString(),
         customerName: name,
         phone,
+        ...(email ? { email } : {}),
+        ...(shippingAddress ? { shippingAddress } : {}),
         lines,
         status: 'yeni',
+        ...(input.payment ? { payment: input.payment } : {}),
         note: input.note?.trim() || undefined,
         internalNotes: undefined,
         communications: [],
         statusLog: [],
       }
       setOrders((prev) => [next, ...prev])
+      return next
     },
     []
   )

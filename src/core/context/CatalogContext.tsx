@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { CatalogCategory, CatalogProduct, CategoryQuestion } from '../catalog/types'
+import type { CatalogCategory, CatalogPackage, CatalogPackageKind, CatalogProduct, CategoryQuestion } from '../catalog/types'
 import {
   defaultCategories,
   defaultProducts,
@@ -16,6 +16,7 @@ import {
   resetCatalog,
   saveCatalog,
 } from '../catalog/storage'
+import { applyPackageSlugsToProducts, defaultPackages } from '../catalog/defaultPackageSeed'
 
 export type CategoryQuestionDraft = { label: string; placeholder?: string }
 
@@ -30,9 +31,21 @@ type AddProductInput = {
   categoryAnswers?: Record<string, string>
 }
 
+type AddPackageInput = {
+  name: string
+  slug?: string
+  tagline: string
+  description: string
+  kind: CatalogPackageKind
+  imageUrl?: string
+  productIds: number[]
+  bundleDiscountPercent: number
+}
+
 type CatalogContextValue = {
   categories: CatalogCategory[]
   products: CatalogProduct[]
+  packages: CatalogPackage[]
   addCategory: (name: string, questionDrafts?: CategoryQuestionDraft[], imageUrl?: string) => void
   updateCategory: (
     id: number,
@@ -55,9 +68,54 @@ type CatalogContextValue = {
       >
     >
   ) => void
+  addPackage: (input: AddPackageInput) => void
+  updatePackage: (
+    id: number,
+    patch: Partial<
+      Pick<
+        CatalogPackage,
+        'name' | 'slug' | 'tagline' | 'description' | 'kind' | 'imageUrl' | 'productIds' | 'bundleDiscountPercent'
+      >
+    >
+  ) => void
   deleteCategory: (id: number) => void
   deleteProduct: (id: number) => void
+  deletePackage: (id: number) => void
   resetToDefaults: () => void
+}
+
+function slugifyPackageName(name: string) {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function uniqueSlug(base: string, existing: CatalogPackage[], exceptId?: number) {
+  let slug = base || 'paket'
+  let n = 1
+  while (existing.some((p) => p.id !== exceptId && p.slug === slug)) {
+    slug = `${base}-${n}`
+    n += 1
+  }
+  return slug
+}
+
+function syncProductsPackageSlugs(products: CatalogProduct[], packages: CatalogPackage[]) {
+  return applyPackageSlugsToProducts(
+    products.map((p) => {
+      const { packageSlugs: _drop, ...rest } = p
+      return rest as CatalogProduct
+    }),
+    packages
+  )
 }
 
 const CatalogContext = createContext<CatalogContextValue | null>(null)
@@ -69,10 +127,11 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   }
   const [categories, setCategories] = useState<CatalogCategory[]>(() => initialCatalog.current!.categories)
   const [products, setProducts] = useState<CatalogProduct[]>(() => initialCatalog.current!.products)
+  const [packages, setPackages] = useState<CatalogPackage[]>(() => initialCatalog.current!.packages)
 
   useEffect(() => {
-    saveCatalog(categories, products)
-  }, [categories, products])
+    saveCatalog(categories, products, packages)
+  }, [categories, products, packages])
 
   const addCategory = useCallback(
     (name: string, questionDrafts?: CategoryQuestionDraft[], imageUrl?: string) => {
@@ -214,7 +273,108 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       )
     )
       return
-    setProducts((prev) => prev.filter((p) => p.id !== id))
+    setPackages((prevPkg) => {
+      const nextPkg = prevPkg.map((pkg) => ({
+        ...pkg,
+        productIds: pkg.productIds.filter((pid) => pid !== id),
+      }))
+      setProducts((prevProds) =>
+        syncProductsPackageSlugs(
+          prevProds.filter((p) => p.id !== id),
+          nextPkg
+        )
+      )
+      return nextPkg
+    })
+  }, [])
+
+  const addPackage = useCallback((input: AddPackageInput) => {
+    const name = input.name.trim()
+    if (!name) return
+    setPackages((prev) => {
+      const baseSlug = slugifyPackageName(input.slug?.trim() || name)
+      const slug = uniqueSlug(baseSlug, prev)
+      const productIds = [...new Set(input.productIds.filter((id) => Number.isFinite(id)))]
+      const discount = Math.min(50, Math.max(0, Math.floor(input.bundleDiscountPercent)))
+      const imageUrl = input.imageUrl?.trim() || undefined
+      const nextPkg: CatalogPackage = {
+        id: Date.now(),
+        slug,
+        name,
+        tagline: input.tagline.trim(),
+        description: input.description.trim() || 'Aciklama eklenmedi',
+        kind: input.kind,
+        productIds,
+        bundleDiscountPercent: discount,
+        ...(imageUrl ? { imageUrl } : {}),
+      }
+      const next = [...prev, nextPkg]
+      setProducts((prods) => syncProductsPackageSlugs(prods, next))
+      return next
+    })
+  }, [])
+
+  const updatePackage = useCallback(
+    (
+      id: number,
+      patch: Partial<
+        Pick<
+          CatalogPackage,
+          'name' | 'slug' | 'tagline' | 'description' | 'kind' | 'imageUrl' | 'productIds' | 'bundleDiscountPercent'
+        >
+      >
+    ) => {
+      setPackages((prev) => {
+        const next = prev.map((pkg) => {
+          if (pkg.id !== id) return pkg
+          let slug = pkg.slug
+          if (patch.slug !== undefined) {
+            const base = slugifyPackageName(patch.slug.trim() || pkg.name)
+            slug = uniqueSlug(base, prev, id)
+          }
+          const name = patch.name !== undefined ? patch.name.trim() || pkg.name : pkg.name
+          const productIds =
+            patch.productIds !== undefined
+              ? [...new Set(patch.productIds.filter((pid) => Number.isFinite(pid)))]
+              : pkg.productIds
+          const bundleDiscountPercent =
+            patch.bundleDiscountPercent !== undefined
+              ? Math.min(50, Math.max(0, Math.floor(patch.bundleDiscountPercent)))
+              : pkg.bundleDiscountPercent
+          let imageUrl = pkg.imageUrl
+          if (patch.imageUrl !== undefined) {
+            const t = patch.imageUrl.trim()
+            imageUrl = t || undefined
+          }
+          return {
+            ...pkg,
+            name,
+            slug,
+            tagline: patch.tagline !== undefined ? patch.tagline.trim() : pkg.tagline,
+            description:
+              patch.description !== undefined
+                ? patch.description.trim() || 'Aciklama eklenmedi'
+                : pkg.description,
+            kind: patch.kind ?? pkg.kind,
+            productIds,
+            bundleDiscountPercent,
+            ...(imageUrl ? { imageUrl } : {}),
+          }
+        })
+        setProducts((prods) => syncProductsPackageSlugs(prods, next))
+        return next
+      })
+    },
+    []
+  )
+
+  const deletePackage = useCallback((id: number) => {
+    if (!window.confirm('Bu paketi silmek istiyor musunuz? Urunler katalogda kalir.')) return
+    setPackages((prev) => {
+      const next = prev.filter((p) => p.id !== id)
+      setProducts((prods) => syncProductsPackageSlugs(prods, next))
+      return next
+    })
   }, [])
 
   const resetToDefaults = useCallback(() => {
@@ -225,37 +385,50 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     )
       return
     resetCatalog()
+    const pkg = defaultPackages.map((p) => ({ ...p, productIds: [...p.productIds] }))
     setCategories(defaultCategories.map((c) => ({ ...c, questions: c.questions.map((q) => ({ ...q })) })))
     setProducts(
-      defaultProducts.map((p) => ({
-        ...p,
-        images: [...p.images],
-        categoryAnswers: { ...p.categoryAnswers },
-      }))
+      applyPackageSlugsToProducts(
+        defaultProducts.map((p) => ({
+          ...p,
+          images: [...p.images],
+          categoryAnswers: { ...p.categoryAnswers },
+        })),
+        pkg
+      )
     )
+    setPackages(pkg)
   }, [])
 
   const value = useMemo(
     () => ({
       categories,
       products,
+      packages,
       addCategory,
       updateCategory,
       addProduct,
       updateProduct,
+      addPackage,
+      updatePackage,
       deleteCategory,
       deleteProduct,
+      deletePackage,
       resetToDefaults,
     }),
     [
       categories,
       products,
+      packages,
       addCategory,
       updateCategory,
       addProduct,
       updateProduct,
+      addPackage,
+      updatePackage,
       deleteCategory,
       deleteProduct,
+      deletePackage,
       resetToDefaults,
     ]
   )

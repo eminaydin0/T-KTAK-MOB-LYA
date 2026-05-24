@@ -14,6 +14,7 @@ import {
   IconImage,
   IconLanguages,
   IconMenu,
+  IconLayers,
   IconPackage,
   IconSearch,
   IconSettings,
@@ -54,6 +55,7 @@ const SECTIONS: Section[] = [
     items: [
       { to: '/admin/categories', label: 'Kategoriler', hint: 'Urun gruplari', icon: (p) => <IconFolder {...p} /> },
       { to: '/admin/products', label: 'Urunler', hint: 'Liste fiyat ve gorseller', icon: (p) => <IconPackage {...p} /> },
+      { to: '/admin/packages', label: 'Paketler', hint: 'Urunleri birlestir', icon: (p) => <IconLayers {...p} /> },
     ],
   },
   {

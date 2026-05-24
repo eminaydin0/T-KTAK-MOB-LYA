@@ -1,3 +1,4 @@
+import type { OrderPayment, PaymentMethodId, PaymentStatus } from '../payment/types'
 import type { Order, OrderCommunication, OrderLine, OrderStatus, OrderStatusChange } from './types'
 
 const STORAGE_KEY = 'emin-dashboard-orders-v1'
@@ -11,6 +12,48 @@ export function nextReferenceCode(): string {
   const next = prev + 1
   localStorage.setItem(key, String(next))
   return `EMIN-${y}-${String(next).padStart(5, '0')}`
+}
+
+function normalizePayment(raw: unknown): OrderPayment | undefined {
+  if (!raw || typeof raw !== 'object') return undefined
+  const r = raw as Record<string, unknown>
+  const status = r.status as PaymentStatus
+  const method = r.method as PaymentMethodId
+  if (
+    status !== 'pending' &&
+    status !== 'processing' &&
+    status !== 'paid' &&
+    status !== 'failed' &&
+    status !== 'cancelled' &&
+    status !== 'refunded'
+  ) {
+    return undefined
+  }
+  if (method !== 'card' && method !== 'bank_transfer' && method !== 'cash_on_delivery') {
+    return undefined
+  }
+  const amountUsd =
+    typeof r.amountUsd === 'number' && Number.isFinite(r.amountUsd) ? Math.max(0, r.amountUsd) : 0
+  const currency = r.currency === 'TRY' ? 'TRY' : 'USD'
+  const amountTry =
+    typeof r.amountTry === 'number' && Number.isFinite(r.amountTry) ? r.amountTry : undefined
+  const provider =
+    r.provider === 'iyzico' || r.provider === 'stripe' || r.provider === 'mock'
+      ? r.provider
+      : undefined
+  const transactionId =
+    typeof r.transactionId === 'string' && r.transactionId.trim() ? r.transactionId.trim() : undefined
+  const paidAt = typeof r.paidAt === 'string' && r.paidAt.trim() ? r.paidAt.trim() : undefined
+  return {
+    status,
+    method,
+    amountUsd,
+    currency,
+    ...(amountTry !== undefined ? { amountTry } : {}),
+    ...(provider ? { provider } : {}),
+    ...(transactionId ? { transactionId } : {}),
+    ...(paidAt ? { paidAt } : {}),
+  }
 }
 
 function normalizeLine(raw: unknown): OrderLine | null {
@@ -85,14 +128,25 @@ function normalizeOrder(raw: Partial<Order> & { id: string }): Order {
     })
     .filter((x): x is OrderStatusChange => x !== null)
 
+  const email =
+    typeof raw.email === 'string' && raw.email.trim() ? raw.email.trim() : undefined
+  const shippingAddress =
+    typeof raw.shippingAddress === 'string' && raw.shippingAddress.trim()
+      ? raw.shippingAddress.trim()
+      : undefined
+  const payment = normalizePayment(raw.payment)
+
   return {
     id: raw.id,
     referenceCode,
     createdAt,
     customerName: typeof raw.customerName === 'string' ? raw.customerName.trim() || 'Musteri' : 'Musteri',
     phone: typeof raw.phone === 'string' ? raw.phone.trim() : '',
+    ...(email ? { email } : {}),
+    ...(shippingAddress ? { shippingAddress } : {}),
     lines: lines.length > 0 ? lines : [{ productName: 'Urun', qty: 1 }],
     status,
+    ...(payment ? { payment } : {}),
     note: typeof raw.note === 'string' && raw.note.trim() ? raw.note.trim() : undefined,
     internalNotes,
     communications,

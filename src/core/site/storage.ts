@@ -27,10 +27,11 @@ export const defaultSiteData = (): SiteData => ({
   media: defaultMedia,
   settings: {
     siteName: 'EMIN Mobilya',
-    siteTagline: 'Mobilya, ofis ve aydinlatma — genis katalog, USD liste fiyatlari',
-    seoTitle: 'EMIN Mobilya — Koltuk, yatak, ofis, depolama',
+    siteTagline:
+      'Mobilya, ofis, yatak odası ve aydınlatma — 25+ vitrin ürünü, detaylı teknik bilgiler, USD liste fiyatları',
+    seoTitle: 'EMIN Mobilya — Koltuk, masa, ofis, depolama, aydınlatma',
     seoDescription:
-      'Yuzlerce vitrin kombinasyonu: mobilya, sehpa, yatak odasi, depolama ve aydinlatma. Fiyatlar USD, TL tahmini guncel kur ile.',
+      'Geniş demo katalog: oturma grupları, yemek masaları, ofis mobilyası, gardırop, sehpa ve LED aydınlatma. Ürün detaylarında ölçü, malzeme ve bakım bilgileri. Fiyatlar USD; TL karşılığı güncel kur ile tahmini.',
     contactEmail: 'siparis@emin-mobilya.demo',
     contactPhone: '+90 (212) 555 01 23',
     contactAddress: 'Istanbul, Turkiye — Showroom randevu ile',
@@ -40,9 +41,9 @@ export const defaultSiteData = (): SiteData => ({
   },
   contentByLocale: {
     tr: {
-      heroTitle: 'Genis demoya hazir katalog',
+      heroTitle: 'Yaşam alanınız için seçilmiş mobilya koleksiyonu',
       heroSubtitle:
-        'Asagida onlarca ornek urun, alti kategori ve kategoriye ozel form alanlari var. Carousel ve medya kutuphanesi admin panelden duzenlenir; fiyatlar USD, TL karsiligi kur ile tahmini.',
+        '25’ten fazla vitrin ürünü, altı kategoride zengin teknik özellikler ve çok görselli ürün detayları. Sepete ekleyin, ödeme adımına geçin veya showroom randevusu alın — fiyatlar USD, TL tahmini güncel kur ile.',
       categorySectionTitle: 'Kategorilere göz atın',
       categorySectionSubtitle: 'Bir koleksiyona tıklayarak o kategorinin ürünlerine gidin.',
       filterSectionTitle: 'Kategori ve arama',

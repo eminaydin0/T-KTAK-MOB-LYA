@@ -1,3 +1,5 @@
+import type { OrderPayment } from '../payment/types'
+
 /**
  * Siparis durumu (satis sonrasi tipik akis: bekleme → onay → sevkiyat → kapanis)
  */
@@ -35,8 +37,12 @@ export type Order = {
   createdAt: string
   customerName: string
   phone: string
+  email?: string
+  shippingAddress?: string
   lines: OrderLine[]
   status: OrderStatus
+  /** Ödeme bilgisi — gateway bağlandığında dolar */
+  payment?: OrderPayment
   /** Musteri notu (siparis olusturulurken) */
   note?: string
   /** Dahili notlar — sadece admin */

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useCart } from '../../core/context/CartContext'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useSite } from '../../core/context/SiteContext'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { BackToTop } from '../components/BackToTop'
+import { CartPreviewModal } from '../components/CartPreviewModal'
 import { SocialLinks } from '../components/SocialLinks'
 import { SiteNavCategoryMenu } from '../components/SiteNavCategoryMenu'
-import { categoryPath } from '../sitePaths'
+import { cartPath, categoryPath, checkoutPath } from '../sitePaths'
 
 function isExternal(href: string) {
   return (
@@ -35,6 +37,7 @@ export function SiteLayout() {
   const { data, activeLocale, setActiveLocale, resolvedContent } = useSite()
   const { settings, navigation, languages } = data
   const { categories, products } = useCatalog()
+  const { totalItems, openPreview } = useCart()
   const content = resolvedContent
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -170,16 +173,24 @@ export function SiteLayout() {
                 <div className="hidden sm:block">
                   <SiteNavCategoryMenu categories={categoriesWithCount} />
                 </div>
+                <button
+                  type="button"
+                  className="relative site-btn-ghost px-4 py-2"
+                  onClick={() => openPreview()}
+                  aria-label={`Sepet, ${totalItems} ürün`}
+                >
+                  Sepet
+                  {totalItems > 0 ? (
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cotta px-1 text-[10px] font-medium leading-none text-white">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  ) : null}
+                </button>
                 <Link
                   to="/#catalog"
                   className="relative hidden site-btn-ghost px-4 py-2 sm:inline-flex"
                 >
                   Katalog
-                  {products.length > 0 ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cotta px-1 text-[10px] font-medium leading-none text-white">
-                      {products.length > 99 ? '99+' : products.length}
-                    </span>
-                  ) : null}
                 </Link>
                 {enabledLangs.length > 1 ? (
                   <label className="hidden items-center gap-1 lg:flex">
@@ -251,9 +262,33 @@ export function SiteLayout() {
                     </Link>
                   )
                 )}
+                <button
+                  type="button"
+                  className="site-btn-accent mt-3 w-full py-3"
+                  onClick={() => {
+                    setMobileOpen(false)
+                    openPreview()
+                  }}
+                >
+                  Sepet {totalItems > 0 ? `(${totalItems})` : ''}
+                </button>
+                <Link
+                  to={checkoutPath()}
+                  className="site-btn-ghost w-full py-3"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Ödeme
+                </Link>
+                <Link
+                  to={cartPath()}
+                  className="site-btn-ghost w-full py-3"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Sepet sayfası
+                </Link>
                 <Link
                   to="/#catalog"
-                  className="site-btn-accent mt-3 w-full py-3"
+                  className="site-btn-ghost w-full py-3"
                   onClick={() => setMobileOpen(false)}
                 >
                   Katalog
@@ -412,6 +447,7 @@ export function SiteLayout() {
       </footer>
 
       <BackToTop />
+      <CartPreviewModal />
     </div>
   )
 }
