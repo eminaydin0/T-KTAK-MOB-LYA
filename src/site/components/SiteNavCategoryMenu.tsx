@@ -50,12 +50,12 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
     <div ref={rootRef} className={`relative ${className}`}>
       <button
         type="button"
-        className={`inline-flex items-center gap-2 border px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-soft transition ${
+        className={`site-btn gap-2 border px-4 py-2.5 shadow-soft ${
           open
             ? 'border-cotta bg-cotta text-white'
             : activeId != null
               ? 'border-cotta bg-white text-cotta'
-              : 'border-stone-200 bg-white text-stone-700 hover:border-cotta hover:text-cotta'
+              : 'border-line bg-white text-stone-700 hover:border-cotta hover:text-cotta'
         }`}
         aria-expanded={open}
         aria-haspopup="listbox"
@@ -73,7 +73,7 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
 
       {open ? (
         <div
-          className="absolute right-0 top-full z-[80] mt-2 w-[min(calc(100vw-2rem),20rem)] overflow-hidden border border-stone-200 bg-white shadow-card sm:w-80"
+          className="site-card absolute right-0 top-full z-[80] mt-2 w-[min(calc(100vw-2rem),20rem)] overflow-hidden shadow-card sm:w-80"
           role="listbox"
         >
           <ul className="max-h-[min(70vh,22rem)] overflow-y-auto py-2">
@@ -89,13 +89,13 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
                     }`}
                     onClick={() => setOpen(false)}
                   >
-                    <span className="h-10 w-10 shrink-0 overflow-hidden border border-stone-200 bg-surface-muted">
+                    <span className="h-10 w-10 shrink-0 overflow-hidden border border-line bg-surface-muted">
                       {c.imageUrl?.trim() ? (
                         <ImageThumb
                           src={c.imageUrl}
                           alt=""
                           className="h-full w-full object-cover"
-                          emptyClassName="flex h-full w-full items-center justify-center text-[8px] text-stone-400"
+                          emptyClassName="flex h-full w-full items-center justify-center text-xs text-stone-400"
                         />
                       ) : (
                         <span className="flex h-full w-full items-center justify-center text-xs font-semibold text-stone-400">
@@ -112,10 +112,10 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
               )
             })}
           </ul>
-          <div className="border-t border-stone-200 bg-surface-soft px-2 py-2">
+          <div className="border-t border-line bg-surface-soft px-2 py-2">
             <Link
               to="/#catalog"
-              className="block py-2 text-center text-xs font-semibold uppercase tracking-wide text-cotta transition hover:underline"
+              className="site-btn-text block py-2 text-center"
               onClick={() => setOpen(false)}
             >
               Tüm ürünler

@@ -4,61 +4,60 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        /** Ana metin — Montserrat (soft / şık vitrin) */
-        sans: ['"Montserrat"', 'system-ui', 'sans-serif'],
-        /** Başlık & fiyat — serif */
-        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        sans: ['"Source Sans 3"', 'system-ui', 'Segoe UI', 'sans-serif'],
+        display: ['"Source Sans 3"', 'system-ui', 'Segoe UI', 'sans-serif'],
       },
       colors: {
+        ink: '#2a2a2a',
+        line: '#ebebeb',
         surface: {
           DEFAULT: '#ffffff',
-          soft: '#f9f9f9',
-          muted: '#f5f5f5',
+          soft: '#fafaf9',
+          muted: '#f4f4f3',
         },
-        /** Terrakota vurgu (hurst tarzı) */
         cotta: {
-          DEFAULT: '#c17a6b',
-          light: '#e8d4d0',
+          DEFAULT: '#b87263',
+          light: '#f0e6e3',
           muted: '#d4a59a',
-          dark: '#9a5a4e',
-        },
-        warm: {
-          50: '#faf8f5',
-          100: '#f3efe8',
-          200: '#e8e0d4',
-          300: '#d4c9b8',
-          400: '#b5a896',
-          800: '#3d3429',
-          900: '#2a2319',
-          950: '#1a1612',
-        },
-        brand: {
-          gold: '#c9a227',
-          bronze: '#8b6914',
+          dark: '#8f5a4e',
         },
       },
       maxWidth: {
-        /** Vitrin ana içerik — dar, editoryal hizalama */
-        site: '72rem',
+        site: '76rem',
+      },
+      borderRadius: {
+        site: '1rem',
+        'site-lg': '1.25rem',
       },
       boxShadow: {
-        soft: '0 1px 3px rgba(0,0,0,0.06)',
-        card: '0 2px 16px rgba(0,0,0,0.06)',
-        'card-hover': '0 8px 28px rgba(0,0,0,0.08)',
+        soft: '0 1px 2px rgba(0, 0, 0, 0.04)',
+        card: '0 4px 24px rgba(0, 0, 0, 0.06)',
+        'card-hover': '0 12px 40px rgba(0, 0, 0, 0.08)',
+        lift: '0 8px 30px rgba(0, 0, 0, 0.07)',
+      },
+      transitionDuration: {
+        site: '280ms',
+      },
+      transitionTimingFunction: {
+        site: 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       keyframes: {
-        'carousel-ken': {
-          '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(1.05)' },
-        },
         'carousel-progress': {
           '0%': { transform: 'scaleX(0)' },
           '100%': { transform: 'scaleX(1)' },
         },
+        'site-fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'site-spin': {
+          to: { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
-        'carousel-ken': 'carousel-ken 6.5s ease-out forwards',
-        'carousel-progress': 'carousel-progress 6.5s linear forwards',
+        'carousel-progress': 'carousel-progress 7s linear forwards',
+        'site-fade-in': 'site-fade-in 0.5s ease-site ease-out both',
+        'site-spin': 'site-spin 0.7s linear infinite',
       },
     },
   },

@@ -4,7 +4,6 @@ import { useCatalog } from '../../core/context/CatalogContext'
 import { useSite } from '../../core/context/SiteContext'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { BackToTop } from '../components/BackToTop'
-import { ExchangeRateStrip } from '../components/ExchangeRateStrip'
 import { SocialLinks } from '../components/SocialLinks'
 import { SiteNavCategoryMenu } from '../components/SiteNavCategoryMenu'
 import { categoryPath } from '../sitePaths'
@@ -20,60 +19,15 @@ function isExternal(href: string) {
 
 function FooterColTitle({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-6">
-      <h3 className="site-overline text-[#333333]">{children}</h3>
-      <div className="mt-3 block h-px w-14 bg-cotta" />
-    </div>
+    <h3 className="site-eyebrow mb-4 font-semibold text-ink">{children}</h3>
   )
 }
 
-function SiteBrandMark({ name, tagline }: { name: string; tagline?: string }) {
+function SiteBrandMark({ name }: { name: string }) {
   return (
-    <Link to="/" className="group relative z-10 flex flex-col items-center text-center">
-      <span className="relative inline-block px-1">
-        <span
-          className="pointer-events-none absolute -left-0.5 top-1 h-2 w-2 rotate-45 bg-cotta/50"
-          aria-hidden
-        />
-        <span className="relative font-display text-[1.5rem] font-semibold tracking-[0.12em] text-[#333333] sm:text-[1.65rem]">
-          {name}
-        </span>
-      </span>
-      {tagline ? (
-        <span className="mt-1.5 max-w-[18rem] truncate text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500 sm:max-w-lg">
-          {tagline}
-        </span>
-      ) : null}
+    <Link to="/" className="site-brand-title transition duration-site ease-site hover:text-cotta">
+      {name}
     </Link>
-  )
-}
-
-const railBtn =
-  'flex h-10 w-10 items-center justify-center border border-stone-200 bg-white text-stone-500 shadow-soft transition hover:border-cotta hover:text-cotta'
-
-function IconSearch({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-      <circle cx="11" cy="11" r="6.5" />
-      <path strokeLinecap="round" d="M16.5 16.5L20 20" />
-    </svg>
-  )
-}
-
-function IconMail({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16v12H4V6z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 7l8 6 8-6" />
-    </svg>
-  )
-}
-
-function IconSliders({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-      <path strokeLinecap="round" d="M4 7h16M4 12h10M4 17h16" />
-    </svg>
   )
 }
 
@@ -150,11 +104,8 @@ export function SiteLayout() {
     return () => window.removeEventListener('keydown', onKey)
   }, [mobileOpen])
 
-  const navClass =
-    'text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-600 transition hover:text-cotta'
-
   return (
-    <div className="min-h-dvh bg-surface-soft text-[15px] leading-relaxed antialiased">
+    <div className="min-h-dvh bg-surface-soft antialiased">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-cotta focus:px-4 focus:py-2 focus:text-sm focus:text-white focus:shadow-lg"
@@ -162,7 +113,7 @@ export function SiteLayout() {
         İçeriğe geç
       </a>
 
-      <div className="border-b border-stone-200 bg-surface-muted py-2.5 text-center text-[11px] text-stone-500">
+      <div className="site-topbar">
         {settings.contactPhone ? (
           <span>
             <span className="font-semibold text-cotta">Müşteri hattı</span>
@@ -174,28 +125,12 @@ export function SiteLayout() {
         )}
       </div>
 
-      <div className="xl:mx-auto xl:grid xl:max-w-[1580px] xl:grid-cols-[minmax(0,3.25rem)_minmax(0,1fr)_minmax(0,3.25rem)] xl:items-stretch xl:px-2">
-        <aside className="relative z-0 hidden min-h-0 xl:block">
-          <div className="sticky top-0 flex min-h-[50vh] flex-col items-center border-r border-stone-200 py-10">
-            {settings.socialInstagram || settings.socialWhatsApp ? (
-              <SocialLinks
-                layout="vertical"
-                instagram={settings.socialInstagram}
-                whatsapp={settings.socialWhatsApp}
-              />
-            ) : (
-              <span className="sr-only">Sosyal bağlantı yok</span>
-            )}
-          </div>
-        </aside>
-
-        <div className="min-w-0">
-          <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/95 backdrop-blur-md">
-            <div className="mx-auto grid max-w-site grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-4 sm:px-8">
+      <header className="sticky top-0 z-50 bg-white/90 shadow-soft backdrop-blur-md">
+            <div className="mx-auto grid max-w-site grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-3.5 sm:px-8">
               <div className="flex min-w-0 items-center justify-start gap-4 lg:gap-8">
                 <button
                   type="button"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center border border-stone-200 bg-white text-stone-700 shadow-soft lg:hidden"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-700 ring-1 ring-line lg:hidden"
                   aria-expanded={mobileOpen}
                   aria-controls="site-mobile-nav"
                   aria-label={mobileOpen ? 'Menüyü kapat' : 'Menü'}
@@ -213,13 +148,13 @@ export function SiteLayout() {
                       <a
                         key={item.id}
                         href={item.href}
-                        className={navClass}
+                        className="site-nav-link"
                         {...(item.openInNewTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                       >
                         {item.label}
                       </a>
                     ) : (
-                      <Link key={item.id} to={item.href || '/'} className={navClass}>
+                      <Link key={item.id} to={item.href || '/'} className="site-nav-link">
                         {item.label}
                       </Link>
                     )
@@ -228,7 +163,7 @@ export function SiteLayout() {
               </div>
 
               <div className="justify-self-center px-1">
-                <SiteBrandMark name={settings.siteName || 'Vitrin'} tagline={settings.siteTagline} />
+                <SiteBrandMark name={settings.siteName || 'Vitrin'} />
               </div>
 
               <div className="flex items-center justify-end gap-2 sm:gap-2.5">
@@ -237,11 +172,11 @@ export function SiteLayout() {
                 </div>
                 <Link
                   to="/#catalog"
-                  className="relative hidden site-btn-ghost px-4 py-2.5 sm:inline-flex sm:px-5"
+                  className="relative hidden site-btn-ghost px-4 py-2 sm:inline-flex"
                 >
                   Katalog
                   {products.length > 0 ? (
-                    <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center bg-red-600 px-1 text-[10px] font-bold leading-none text-white">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cotta px-1 text-[10px] font-medium leading-none text-white">
                       {products.length > 99 ? '99+' : products.length}
                     </span>
                   ) : null}
@@ -251,7 +186,7 @@ export function SiteLayout() {
                     <select
                       value={activeLocale}
                       onChange={(e) => setActiveLocale(e.target.value)}
-                      className="border border-stone-200 bg-white px-2 py-2 text-[11px] font-medium text-stone-700 outline-none shadow-soft"
+                      className="site-input py-2 text-xs shadow-soft"
                     >
                       {enabledLangs.map((l) => (
                         <option key={l.code} value={l.code}>
@@ -263,13 +198,13 @@ export function SiteLayout() {
                 ) : null}
                 <Link
                   to="/admin"
-                  className="hidden border border-stone-200 bg-white px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-stone-500 shadow-soft transition hover:border-cotta hover:text-cotta sm:inline-block"
+                  className="site-btn-ghost hidden px-3 py-2 text-stone-500 sm:inline-flex"
                 >
                   Yönetim
                 </Link>
               </div>
             </div>
-          </header>
+      </header>
 
       {mobileOpen ? (
         <>
@@ -281,13 +216,13 @@ export function SiteLayout() {
           />
           <div
             id="site-mobile-nav"
-            className="fixed inset-y-0 right-0 z-[70] flex w-[min(100vw,340px)] flex-col border-l border-stone-200 bg-white shadow-xl lg:hidden"
+            className="fixed inset-y-0 right-0 z-[70] flex w-[min(100vw,340px)] flex-col border-l border-line bg-white shadow-xl lg:hidden"
           >
-            <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800">Menü</span>
+            <div className="flex items-center justify-between site-divide-b px-5 py-4">
+              <span className="site-overline text-stone-800">Menü</span>
               <button
                 type="button"
-                className="border border-stone-200 px-3 py-1 text-sm text-stone-600"
+                className="site-btn-ghost px-3 py-1 text-sm normal-case tracking-normal"
                 onClick={() => setMobileOpen(false)}
                 aria-label="Kapat"
               >
@@ -301,7 +236,7 @@ export function SiteLayout() {
                     <a
                       key={item.id}
                       href={item.href}
-                      className="border-b border-stone-100 py-3 text-sm font-medium text-stone-700"
+                      className="site-divide-b py-3 text-sm font-medium text-stone-700"
                       {...(item.openInNewTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                     >
                       {item.label}
@@ -310,7 +245,7 @@ export function SiteLayout() {
                     <Link
                       key={item.id}
                       to={item.href || '/'}
-                      className="border-b border-stone-100 py-3 text-sm font-medium text-stone-700"
+                      className="site-divide-b py-3 text-sm font-medium text-stone-700"
                     >
                       {item.label}
                     </Link>
@@ -318,22 +253,22 @@ export function SiteLayout() {
                 )}
                 <Link
                   to="/#catalog"
-                  className="mt-3 border border-cotta bg-cotta py-3 text-center text-sm font-semibold uppercase tracking-wide text-white"
+                  className="site-btn-accent mt-3 w-full py-3"
                   onClick={() => setMobileOpen(false)}
                 >
                   Katalog
                 </Link>
                 <Link
                   to="/admin"
-                  className="border border-stone-200 py-3 text-center text-xs font-semibold uppercase tracking-wide text-stone-500"
+                  className="site-btn-ghost w-full py-3 text-stone-500"
                 >
                   Yönetim
                 </Link>
               </nav>
 
               {categoriesWithCount.length > 0 ? (
-                <div className="mt-8 border-t border-stone-100 pt-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400">Kategoriler</p>
+                <div className="mt-8 border-t border-line pt-6">
+                  <p className="site-overline">Kategoriler</p>
                   <ul className="mt-3 space-y-1">
                     {categoriesWithCount.map((c) => (
                       <li key={c.id}>
@@ -344,12 +279,12 @@ export function SiteLayout() {
                         >
                           <span className="flex min-w-0 items-center gap-3">
                             {c.imageUrl?.trim() ? (
-                              <span className="h-9 w-9 shrink-0 overflow-hidden border border-stone-200 bg-surface-muted">
+                              <span className="h-9 w-9 shrink-0 overflow-hidden border border-line bg-surface-muted">
                                 <ImageThumb
                                   src={c.imageUrl}
                                   alt=""
                                   className="h-full w-full object-cover"
-                                  emptyClassName="flex h-full w-full items-center justify-center text-[8px] text-stone-400"
+                                  emptyClassName="flex h-full w-full items-center justify-center text-xs text-stone-400"
                                 />
                               </span>
                             ) : null}
@@ -364,12 +299,12 @@ export function SiteLayout() {
               ) : null}
 
               {enabledLangs.length > 1 ? (
-                <label className="mt-8 flex items-center justify-between gap-3 border-t border-stone-100 pt-6 text-sm text-stone-600">
+                <label className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-6 text-sm text-stone-600">
                   Dil
                   <select
                     value={activeLocale}
                     onChange={(e) => setActiveLocale(e.target.value)}
-                    className="border border-stone-300 bg-white px-3 py-2 text-sm"
+                    className="site-input py-2"
                   >
                     {enabledLangs.map((l) => (
                       <option key={l.code} value={l.code}>
@@ -384,25 +319,12 @@ export function SiteLayout() {
         </>
       ) : null}
 
-      <div className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-site flex-col items-stretch justify-between gap-3 px-5 py-3.5 sm:flex-row sm:items-center sm:px-8">
-          <p className="text-[11px] text-stone-500">
-            <span className="font-semibold text-[#333333]">Güncel kur</span>
-            <span className="mx-2 text-stone-300">·</span>
-            USD fiyatlar için tahmini TL
-          </p>
-          <div className="shrink-0 [&>div]:border-stone-200 [&>div]:bg-surface-muted">
-            <ExchangeRateStrip />
-          </div>
-        </div>
-      </div>
-
-      <main id="main" className="mx-auto max-w-site px-5 py-12 sm:px-8 sm:py-16 md:py-20">
+      <main id="main" className="mx-auto max-w-site px-5 py-10 sm:px-8 sm:py-14 md:py-16">
         <Outlet />
       </main>
 
-      <section className="border-y border-stone-200 bg-white" aria-label="İletişim">
-        <div className="mx-auto flex max-w-site flex-col items-center justify-between gap-8 px-5 py-14 text-center sm:flex-row sm:text-left sm:px-8 md:py-16">
+      <section className="bg-surface-muted" aria-label="İletişim">
+        <div className="mx-auto flex max-w-site flex-col items-center justify-between gap-6 px-5 py-12 text-center sm:flex-row sm:text-left sm:px-8 md:py-14">
           <div>
             <h2 className="site-section-title">Teklif & randevu</h2>
             <p className="site-body mt-3 max-w-md">
@@ -414,24 +336,8 @@ export function SiteLayout() {
           </Link>
         </div>
       </section>
-        </div>
 
-        <aside className="relative z-0 hidden min-h-0 border-l border-stone-200 xl:block">
-          <div className="sticky top-0 flex min-h-[50vh] flex-col items-center gap-5 py-10" aria-label="Kısayollar">
-            <Link to="/#catalog" className={railBtn} title="Katalogda ara">
-              <IconSearch className="h-[17px] w-[17px]" />
-            </Link>
-            <Link to="/iletisim" className={railBtn} aria-label="İletişim">
-              <IconMail className="h-[17px] w-[17px]" />
-            </Link>
-            <Link to="/admin" className={railBtn} aria-label="Yönetim">
-              <IconSliders className="h-[17px] w-[17px]" />
-            </Link>
-          </div>
-        </aside>
-      </div>
-
-      <footer id="footer" className="border-t border-stone-200 bg-surface-muted text-stone-600">
+      <footer id="footer" className="bg-white text-stone-500">
         <div className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20">
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-10">
             <div>
@@ -498,7 +404,7 @@ export function SiteLayout() {
             </div>
           </div>
 
-          <div className="mt-14 border-t border-stone-200 pt-8 text-center text-xs text-stone-400">
+          <div className="mt-14 border-t border-line pt-8 text-center text-xs text-stone-400">
             <p>{content.footerText}</p>
             <p className="mt-2">© {new Date().getFullYear()} {settings.siteName}</p>
           </div>

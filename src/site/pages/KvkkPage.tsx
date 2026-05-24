@@ -14,19 +14,21 @@ export function KvkkPage() {
   }, [name])
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <nav className="mb-8 text-sm text-stone-500">
-        <Link to="/" className="font-medium text-[#333333] transition hover:text-cotta">
+    <div className="site-enter mx-auto max-w-2xl">
+      <nav className="site-breadcrumb mb-8">
+        <Link to="/" className="site-link">
           Ana sayfa
         </Link>
-        <span className="mx-2 text-stone-300">/</span>
+        <span className="text-stone-300" aria-hidden>
+          /
+        </span>
         <span className="text-stone-700">KVKK</span>
       </nav>
 
-      <h1 className="font-display text-3xl font-semibold text-[#333333] sm:text-4xl">Kişisel veriler</h1>
-      <p className="mt-3 text-lg text-stone-600">6698 sayılı KVKK kapsamında bilgilendirme</p>
+      <h1 className="site-page-title">Kişisel veriler</h1>
+      <p className="site-body mt-3 text-lg">6698 sayılı KVKK kapsamında bilgilendirme</p>
 
-      <div className="mt-8 space-y-4 leading-relaxed text-stone-700">
+      <div className="site-body mt-8 space-y-4">
         <p>
           Veri sorumlusu ve işleme amaçlarına ilişkin ayrıntılı aydınlatma metni, işletmenizin hukuk birimi tarafından
           hazırlanıp bu alana yerleştirilebilir. Burada yalnızca örnek bir iskelet sunulmaktadır.
@@ -35,7 +37,7 @@ export function KvkkPage() {
           Kullanıcıların kişisel verileri; açık rıza veya kanunda öngörülen diğer hukuki sebepler çerçevesinde,
           belirli, açık ve meşru amaçlarla sınırlı olarak işlenmelidir.
         </p>
-        <p className="text-sm text-stone-500">
+        <p className="site-caption">
           Başvuru için{' '}
           <Link to="/iletisim" className="font-medium text-cotta-dark underline-offset-2 hover:underline">
             İletişim

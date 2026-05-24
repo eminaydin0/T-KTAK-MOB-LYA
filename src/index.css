@@ -1,57 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   html {
-    @apply scroll-smooth antialiased;
+    @apply scroll-smooth font-sans antialiased text-ink;
+    text-size-adjust: 100%;
   }
   body {
-    @apply bg-surface-soft font-sans text-[#333333];
+    @apply bg-surface-soft text-[15px] leading-relaxed;
+    overflow-x: hidden;
   }
 }
 
 /**
- * Vitrin — ortak ölçek: overline, başlık, kart, butonlar (hurst / şık minimal)
+ * Vitrin — online mağaza: sade, görsel odaklı, yumuşak
  */
 @layer components {
-  .site-overline {
-    @apply text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-400;
+  .site-eyebrow {
+    @apply text-[11px] font-medium tracking-wide text-stone-400;
+  }
+
+  .site-page-title {
+    @apply text-2xl font-semibold tracking-tight text-ink sm:text-3xl md:text-[2rem];
   }
 
   .site-section-title {
-    @apply font-display text-[1.625rem] font-semibold leading-tight tracking-tight text-[#333333] md:text-[1.875rem];
+    @apply text-xl font-semibold tracking-tight text-ink sm:text-2xl;
   }
 
-  .site-hero-title {
-    @apply font-display text-[clamp(1.35rem,2.4vw,1.85rem)] font-semibold leading-[1.2] tracking-tight text-[#333333];
-  }
-
-  .site-section-rule {
-    @apply mt-4 block h-px w-14 bg-cotta;
-  }
-
-  .site-card {
-    @apply border border-stone-200 bg-white shadow-soft;
-  }
-
-  .site-card-muted {
-    @apply border border-stone-200 bg-surface-soft shadow-soft;
+  .site-card-title {
+    @apply text-base font-semibold text-ink sm:text-lg;
   }
 
   .site-body {
-    @apply text-sm leading-relaxed text-stone-600;
+    @apply text-sm leading-relaxed text-stone-500;
   }
 
-  .site-btn-ghost {
-    @apply inline-flex items-center justify-center border border-stone-400 bg-white px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#333333] transition hover:border-cotta hover:text-cotta;
+  .site-caption {
+    @apply text-xs text-stone-400;
+  }
+
+  .site-link {
+    @apply text-ink transition duration-site ease-site hover:text-cotta;
+  }
+
+  .site-breadcrumb {
+    @apply flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-400;
+  }
+
+  .site-nav-link {
+    @apply text-sm font-medium text-stone-600 transition duration-site ease-site hover:text-ink;
+  }
+
+  .site-topbar {
+    @apply bg-surface-muted/80 py-2 text-center text-xs text-stone-500;
+  }
+
+  .site-brand-title {
+    @apply text-lg font-semibold tracking-tight text-ink sm:text-xl;
+  }
+
+  /* Yüzeyler — ince çizgi, yumuşak gölge */
+  .site-card {
+    @apply rounded-site-lg bg-white shadow-soft;
+  }
+
+  .site-card-muted {
+    @apply rounded-site-lg bg-white/80 shadow-soft;
+  }
+
+  .site-empty {
+    @apply rounded-site-lg bg-surface-muted px-6 py-14 text-center;
+  }
+
+  .site-divide-b {
+    @apply border-b border-line/80;
+  }
+
+  .site-divide-t {
+    @apply border-t border-line/80;
+  }
+
+  .site-divide-y {
+    @apply border-y border-line/80;
+  }
+
+  /* Butonlar — normal yazı, yuvarlak */
+  .site-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition duration-site ease-site;
   }
 
   .site-btn-accent {
-    @apply inline-flex items-center justify-center bg-cotta px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-cotta-dark;
+    @apply site-btn bg-ink text-white hover:bg-stone-800;
+  }
+
+  .site-btn-ghost {
+    @apply site-btn border border-line bg-white text-ink hover:border-stone-300 hover:bg-surface-muted;
+  }
+
+  .site-btn-text {
+    @apply inline-flex items-center gap-1 text-sm font-medium text-cotta transition duration-site ease-site hover:text-cotta-dark;
+  }
+
+  .site-btn-icon {
+    @apply flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-stone-500 shadow-soft backdrop-blur-sm transition duration-site ease-site hover:bg-white hover:text-ink;
   }
 
   .site-input {
-    @apply w-full border border-stone-200 bg-surface-soft px-4 py-3 text-sm text-[#333333] outline-none transition placeholder:text-stone-400 focus:border-cotta focus:bg-white focus:ring-1 focus:ring-cotta/25;
+    @apply w-full rounded-full border-0 bg-white px-4 py-2.5 text-sm text-ink shadow-soft outline-none ring-1 ring-line transition duration-site ease-site placeholder:text-stone-400 focus:ring-cotta/30;
+  }
+
+  .site-pill {
+    @apply inline-flex shrink-0 items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-stone-600 shadow-soft ring-1 ring-line/80 transition duration-site ease-site hover:text-ink;
+  }
+
+  .site-pill--active {
+    @apply bg-ink text-white ring-ink hover:text-white;
+  }
+
+  .site-badge-soft {
+    @apply inline-flex rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-stone-600 backdrop-blur-sm;
+  }
+
+  .site-tag {
+    @apply rounded-full bg-surface-muted px-2.5 py-0.5 text-xs text-stone-600;
+  }
+
+  .site-enter {
+    @apply motion-safe:animate-site-fade-in motion-reduce:animate-none;
+  }
+
+  .site-img-zoom {
+    @apply transition duration-[600ms] ease-site;
+  }
+
+  .shop-card-media:hover .site-img-zoom,
+  .shop-category-tile:hover .site-img-zoom {
+    @apply scale-[1.03];
+  }
+
+  .site-card-hover {
+    @apply transition duration-site ease-site hover:shadow-card-hover;
+  }
+
+  .site-spinner {
+    @apply inline-block h-4 w-4 animate-site-spin rounded-full border-2 border-line border-t-cotta;
+  }
+
+  .site-loading {
+    @apply inline-flex items-center gap-2 text-xs text-stone-500;
+  }
+
+  /* Ürün kartı — görsel öncelikli */
+  .shop-card {
+    @apply flex h-full flex-col;
+  }
+
+  .shop-card-media {
+    @apply relative block aspect-[4/5] overflow-hidden rounded-site-lg bg-surface-muted;
+  }
+
+  .shop-card-body {
+    @apply flex flex-1 flex-col pt-3;
+  }
+
+  .shop-card-name {
+    @apply line-clamp-2 text-sm font-medium leading-snug text-ink transition duration-site ease-site;
+  }
+
+  .shop-card:hover .shop-card-name {
+    @apply text-cotta;
+  }
+
+  .shop-card-price {
+    @apply mt-1.5 text-sm font-semibold tabular-nums text-ink;
+  }
+
+  /* Kategori vitrini */
+  .shop-category-grid {
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4;
+  }
+
+  .shop-category-tile {
+    @apply relative block aspect-[3/4] overflow-hidden rounded-site-lg bg-surface-muted shadow-soft transition duration-site ease-site hover:shadow-card;
+  }
+
+  /* Ana sayfa katalog */
+  .home-product-grid {
+    @apply grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .home-hero-copy {
+    @apply mx-auto max-w-xl px-2 text-center;
+  }
+
+  /* Geriye uyumluluk */
+  .site-overline {
+    @apply site-eyebrow;
+  }
+
+  .site-meta {
+    @apply site-eyebrow;
+  }
+
+  .site-price {
+    @apply shop-card-price;
+  }
+
+  .site-chip {
+    @apply site-pill;
+  }
+
+  .site-section-rule {
+    @apply mt-3 block h-px w-10 bg-cotta/30;
+  }
+
+  .site-product-name {
+    @apply shop-card-name;
+  }
+
+  .site-panel {
+    @apply rounded-site bg-surface-muted px-3 py-2 text-xs text-stone-600;
+  }
+
+  .site-badge {
+    @apply site-badge-soft bg-cotta text-white;
   }
 }
