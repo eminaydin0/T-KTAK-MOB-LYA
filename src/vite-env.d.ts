@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly VITE_PAYMENT_ENABLED?: string
   /** iyzico | stripe | mock */
   readonly VITE_PAYMENT_PROVIDER?: string
+  /** Canonical URL ve Open Graph icin site kok adresi (or. https://www.emin-mobilya.com) */
+  readonly VITE_SITE_URL?: string
 }
 
 interface ImportMeta {

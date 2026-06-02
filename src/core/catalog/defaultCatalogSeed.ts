@@ -1,6 +1,8 @@
 import type { CatalogCategory, CatalogProduct } from './types'
+import { extraCategories, extraProducts } from './defaultCatalogSeedExtra'
+import { enrichCategories, enrichProducts } from './catalogSlugs'
 
-export const defaultCategories: CatalogCategory[] = [
+const baseCategories: Omit<CatalogCategory, 'slug'>[] = [
   {
     id: 1,
     name: 'Mobilya',
@@ -69,7 +71,9 @@ export const defaultCategories: CatalogCategory[] = [
   },
 ]
 
-export const defaultProducts: CatalogProduct[] = [
+export const defaultCategories: CatalogCategory[] = enrichCategories([...baseCategories, ...extraCategories])
+
+const baseProducts: Omit<CatalogProduct, 'slug'>[] = [
   {
     id: 1,
     name: 'Ahşap Yemek Masası',
@@ -537,3 +541,5 @@ export const defaultProducts: CatalogProduct[] = [
     },
   },
 ]
+
+export const defaultProducts: CatalogProduct[] = enrichProducts([...baseProducts, ...extraProducts])

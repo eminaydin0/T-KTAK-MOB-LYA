@@ -1,12 +1,11 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { formatUsdAndTry } from '../../shared/formatPrice'
-import {
-  packageBundlePriceUsd,
-  packagePartsTotalUsd,
-} from '../../core/catalog/defaultPackageSeed'
-import { SitePackageCard } from './SitePackageCard'
+import { packageBundlePriceUsd } from '../../core/catalog/defaultPackageSeed'
+import { packagePath } from '../sitePaths'
+import { ImageThumb } from '../../shared/components/ImageThumb'
 
 export function HomePackageShowcase() {
   const { packages, products } = useCatalog()
@@ -17,16 +16,12 @@ export function HomePackageShowcase() {
       const parts = pkg.productIds
         .map((id) => products.find((p) => p.id === id))
         .filter((p): p is NonNullable<typeof p> => p != null)
-      const total = packagePartsTotalUsd(pkg.productIds, products)
       const bundle = packageBundlePriceUsd(pkg.productIds, products, pkg.bundleDiscountPercent)
-      const totalFmt = formatUsdAndTry(total, usdToTry)
-      const bundleFmt = formatUsdAndTry(bundle, usdToTry)
       return {
         pkg,
         partsCount: parts.length,
-        totalFmt,
-        bundleFmt,
-        savingsLabel: pkg.bundleDiscountPercent > 0 ? `%${pkg.bundleDiscountPercent} set indirimi` : undefined,
+        bundleFmt: formatUsdAndTry(bundle, usdToTry),
+        savings: pkg.bundleDiscountPercent,
       }
     })
   }, [packages, products, usdToTry])
@@ -34,29 +29,59 @@ export function HomePackageShowcase() {
   if (rows.length === 0) return null
 
   return (
-    <section id="packages" className="site-enter scroll-mt-24" aria-labelledby="home-packages-title">
-      <div className="text-center">
-        <p className="site-eyebrow text-cotta">Koleksiyon paketleri</p>
-        <h2 id="home-packages-title" className="site-section-title mt-2">
-          Tam set veya parça parça
-        </h2>
-        <p className="site-body mx-auto mt-3 max-w-lg">
-          Düğün, oturma odası ve yatak odası paketlerimizin tüm parçalarını ayrı ayrı da satın alabilirsiniz.
-        </p>
-      </div>
+    <section id="packages" className="home-packages home-breakout site-enter scroll-mt-24" aria-labelledby="home-packages-title">
+      <div className="home-packages-inner">
+        <header className="home-packages-head">
+          <h2 id="home-packages-title" className="home-packages-title">
+            Setlerde indirim,
+            <br />
+            parçada özgürlük
+          </h2>
+          <p className="home-packages-lead">
+            Tam paketi tek tıkla sepete ekleyin — indirim otomatik uygulanır. İstediğiniz parçayı ayrıca da alabilirsiniz.
+          </p>
+        </header>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-3">
-        {rows.map((row) => (
-          <SitePackageCard
-            key={row.pkg.id}
-            pkg={row.pkg}
-            partsCount={row.partsCount}
-            partsTotalUsd={row.totalFmt.usd}
-            bundlePriceUsd={row.bundleFmt.usd}
-            bundleTry={row.bundleFmt.tryApprox ?? undefined}
-            savingsLabel={row.savingsLabel}
-          />
-        ))}
+        <ul className="home-packages-list">
+          {rows.map((row, index) => (
+            <li key={row.pkg.id}>
+              <Link to={packagePath(row.pkg.slug)} className="home-package-row group">
+                <span className="home-package-num">{String(index + 1).padStart(2, '0')}</span>
+                <div className="home-package-thumb">
+                  {row.pkg.imageUrl?.trim() ? (
+                    <ImageThumb
+                      src={row.pkg.imageUrl}
+                      alt=""
+                      className="site-img-zoom h-full w-full object-cover"
+                      emptyClassName="flex h-full w-full items-center justify-center bg-stone-700"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-stone-700 text-stone-500">
+                      Set
+                    </div>
+                  )}
+                </div>
+                <div className="home-package-body">
+                  <p className="home-package-name">{row.pkg.name}</p>
+                  <p className="home-package-tag">{row.pkg.tagline}</p>
+                  <p className="home-package-meta">
+                    {row.partsCount} parça
+                    {row.savings > 0 ? ` · %${row.savings} set indirimi` : ''}
+                  </p>
+                </div>
+                <div className="home-package-price">
+                  <p className="text-lg font-light tabular-nums text-white">{row.bundleFmt.usd}</p>
+                  {row.bundleFmt.tryApprox ? (
+                    <p className="text-xs text-stone-400">{row.bundleFmt.tryApprox}</p>
+                  ) : null}
+                  <span className="home-package-arrow" aria-hidden>
+                    ↗
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   )

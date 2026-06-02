@@ -22,6 +22,8 @@ export function AdminCategoriesPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [editing, setEditing] = useState<CatalogCategory | null>(null)
   const [editName, setEditName] = useState('')
+  const [editSlug, setEditSlug] = useState('')
+  const [editSeoDescription, setEditSeoDescription] = useState('')
   const [editImageUrl, setEditImageUrl] = useState('')
   const [editQuestions, setEditQuestions] = useState<CategoryQuestion[]>([])
 
@@ -35,6 +37,8 @@ export function AdminCategoriesPage() {
   const openEdit = (c: CatalogCategory) => {
     setEditing(c)
     setEditName(c.name)
+    setEditSlug(c.slug)
+    setEditSeoDescription(c.seoDescription ?? '')
     setEditImageUrl(c.imageUrl ?? '')
     setEditQuestions(c.questions.map((q) => ({ ...q })))
     setEditOpen(true)
@@ -44,6 +48,8 @@ export function AdminCategoriesPage() {
     setEditOpen(false)
     setEditing(null)
     setEditName('')
+    setEditSlug('')
+    setEditSeoDescription('')
     setEditImageUrl('')
     setEditQuestions([])
   }
@@ -68,6 +74,8 @@ export function AdminCategoriesPage() {
       }))
     updateCategory(editing.id, {
       name: trimmed || editing.name,
+      slug: editSlug,
+      seoDescription: editSeoDescription,
       questions,
       imageUrl: editImageUrl,
     })
@@ -230,6 +238,27 @@ export function AdminCategoriesPage() {
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               required
+            />
+          </Field>
+
+          <Field label="URL slug" htmlFor="ecat-slug" hint="Vitrin: /kategori/slug — ad değişince otomatik güncellenmez">
+            <input
+              id="ecat-slug"
+              className={inputClass}
+              value={editSlug}
+              onChange={(e) => setEditSlug(e.target.value)}
+              placeholder="ornek-kategori"
+              required
+            />
+          </Field>
+
+          <Field label="SEO açıklaması" htmlFor="ecat-seo" hint="Arama sonuçları ve kategori sayfası meta açıklaması">
+            <textarea
+              id="ecat-seo"
+              className={`${inputClass} min-h-[80px] resize-y`}
+              value={editSeoDescription}
+              onChange={(e) => setEditSeoDescription(e.target.value)}
+              placeholder="Kategori özeti (isteğe bağlı)"
             />
           </Field>
 

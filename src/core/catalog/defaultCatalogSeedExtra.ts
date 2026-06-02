@@ -1,0 +1,458 @@
+import type { CatalogCategory, CatalogProduct } from './types'
+
+/** v6+ seed genislemesi — loadCatalog mevcut kayda id ile ekler */
+export const extraCategories: Omit<CatalogCategory, 'slug'>[] = [
+  {
+    id: 7,
+    name: 'Mutfak',
+    imageUrl: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&h=600&fit=crop',
+    questions: [
+      { id: 'q_mutfak_olcu', label: 'Tezgah / modül ölçüsü (cm)', placeholder: 'G x D x Y' },
+      { id: 'q_mutfak_malzeme', label: 'Tezgah malzemesi', placeholder: 'Kuvars, laminat, masif…' },
+      { id: 'q_mutfak_mekanizma', label: 'Çekmece / kapak mekanizması', placeholder: 'Soft-close, push-open…' },
+      { id: 'q_mutfak_montaj', label: 'Montaj kapsamı', placeholder: 'Sök-tak, yerinde montaj…' },
+    ],
+  },
+  {
+    id: 8,
+    name: 'Bahçe & Balkon',
+    imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=600&fit=crop',
+    questions: [
+      { id: 'q_bahce_malzeme', label: 'Dış mekân malzemesi', placeholder: 'Alüminyum, teak, rattan…' },
+      { id: 'q_bahce_kapasite', label: 'Oturma kapasitesi', placeholder: 'Kişi sayısı' },
+      { id: 'q_bahce_koruma', label: 'Hava koşullarına dayanım', placeholder: 'UV, pas, su itici…' },
+      { id: 'q_bahce_kapak', label: 'Minder / örtü', placeholder: 'Çıkarılabilir, yıkanabilir…' },
+    ],
+  },
+]
+
+const img = (id: string, w = 800, h = 600) =>
+  `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop`
+
+export const extraProducts: Omit<CatalogProduct, 'slug'>[] = [
+  {
+    id: 26,
+    name: 'Kuvars Tezgahlı Mutfak Adası',
+    categoryId: 7,
+    description:
+      'Açık plan mutfaklar için merkezi ada modülü; 20 mm kuvars tezgah lekeye ve ısıya karşı dayanıklıdır. Alt gövdede üç çekmece ve bir kapaklı dolap bulunur; push-open mekanizma sessiz kullanım sağlar.\n\nTezgah üzerinde hazırlık alanı ve kahvaltı barı için 40 cm çıkıntılı oturma kenarı opsiyoneldir. Elektrikli ocak ve davlumbaz için üst modül ayrı sipariş edilir.\n\nÖlçü keşfi ve 3D yerleşim planı ücretsizdir. Montaj ekibi aynı gün teslimat sonrası kurulum yapabilir.',
+    images: [img('1556911220-bff31c812dba'), img('1556912168-2c96756ba7b6')],
+    priceUsd: 2140,
+    stockStatus: 'pre_order',
+    leadTimeDays: 35,
+    categoryAnswers: {
+      q_mutfak_olcu: '200 x 90 x 92 cm (tezgah yüksekliği 90 cm)',
+      q_mutfak_malzeme: 'Kuvars tezgah, mat beyaz gövde',
+      q_mutfak_mekanizma: 'Soft-close + push-open çekmece',
+      q_mutfak_montaj: 'Yerinde montaj dahil (şehir içi)',
+    },
+  },
+  {
+    id: 27,
+    name: 'Bar Taburesi (2’li)',
+    categoryId: 7,
+    description:
+      'Ada mutfak ve bar tezgahı için yüksek bar taburesi seti. Ayarlanabilir gazlı piston 62–82 cm arası yükseklik sunar; 360° dönebilir oturak misafir kullanımında pratiktir.\n\nSuni deri döşeme kolay silinir; krom ayak ve taban halkası zemin çizilmesini önler. Set halinde %5 indirim uygulanır.\n\nAynı seride sırtlı bar sandalyesi mevcuttur.',
+    images: [img('1503602642458-232111445657'), img('1567538096630-e0c55bd6374c')],
+    priceUsd: 168,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_mutfak_olcu: 'Ø 40 cm oturak, ayarlı yükseklik',
+      q_mutfak_malzeme: 'Metal ayak, suni deri',
+      q_mutfak_mekanizma: 'Gazlı piston',
+      q_mutfak_montaj: 'Montajsız, kutudan çıkar',
+    },
+  },
+  {
+    id: 28,
+    name: 'Üst Dolap Seti (3 Modül)',
+    categoryId: 7,
+    description:
+      'Fırın ve buzdolabı üstü için üç parçalı üst dolap seti. 72 cm yükseklik standart mutfak hizasına uygundur; cam kapaklı vitrin modülü ortada konumlanır.\n\nLED bant aydınlatma (opsiyonel) içeriği vurgular. Mat antrasit ve beyaz renk kombinasyonu modern bir görünüm verir.\n\nDuvara ankraj aparatları pakete dahildir.',
+    images: [img('1556912168-2c96756ba7b6'), img('1615874959474-d60996a81fe8')],
+    priceUsd: 540,
+    stockStatus: 'pre_order',
+    leadTimeDays: 21,
+    categoryAnswers: {
+      q_mutfak_olcu: 'Toplam 240 x 35 x 72 cm (3 modül)',
+      q_mutfak_malzeme: '18 mm laminat gövde, cam kapak',
+      q_mutfak_mekanizma: 'Soft-close menteşe',
+      q_mutfak_montaj: 'Modüler montaj kılavuzu',
+    },
+  },
+  {
+    id: 29,
+    name: 'Kiler Dolabı Yüksek',
+    categoryId: 7,
+    description:
+      'Kuru gıda, küçük ev aletleri ve mutfak gereçleri için tam boy kiler dolabı. İç düzen: ayarlanabilir raflar, sepetli çekmece ve kapalı alt bölme.\n\n210 cm yükseklik tavan tipi dairelerde de uygundur; üst raf merdiven ile erişilir. Beyaz gövde ve gümüş kulp seti standarttır.\n\nİç sepet ve şişe rafı aksesuarları eklenebilir.',
+    images: [img('1556911220-e32a9d091449', 800, 600)],
+    priceUsd: 680,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_mutfak_olcu: '60 x 58 x 210 cm',
+      q_mutfak_malzeme: 'Suntalam beyaz',
+      q_mutfak_mekanizma: 'Tam açılım çekmece',
+      q_mutfak_montaj: 'İki kişilik montaj önerilir',
+    },
+  },
+  {
+    id: 30,
+    name: 'Kahvaltı Köşesi Bankı',
+    categoryId: 7,
+    description:
+      'Pencere altı ve mutfak köşesi için L tipi bank oturma. Altında açık raf veya kapalı dolap seçeneği vardır; minder kılıfı çıkarılabilir ve 30°C’de yıkanır.\n\nMeşe kaplama ve antrasit döşeme kombinasyonu sıcak bir mutfak atmosferi yaratır. Duvara sabitleme önerilir.\n\nÖzel ölçü üretim 2–3 hafta terminlidir.',
+    images: [img('1586023492125-27b2c045efd7')],
+    priceUsd: 395,
+    stockStatus: 'pre_order',
+    leadTimeDays: 18,
+    categoryAnswers: {
+      q_mutfak_olcu: '150 x 50 x 48 cm (L köşe)',
+      q_mutfak_malzeme: 'Meşe laminat, keten minder',
+      q_mutfak_mekanizma: '—',
+      q_mutfak_montaj: 'Yerinde sabitleme opsiyonel',
+    },
+  },
+  {
+    id: 31,
+    name: 'Teak Bahçe Yemek Seti (6 Kişi)',
+    categoryId: 8,
+    description:
+      'Doğal teak masifinden üretilen dış mekân yemek seti: 180 cm masa ve altı sandalye. Teak yağı uygulaması UV ve neme karşı ilk sezon koruması sağlar; yıllık bakım önerilir.\n\nSandalye oturağı ergonomik eğimlidir; katlanır model depolama için uygundur. Minder seti ayrı satılır.\n\nTeras, bahçe ve havuz kenarı için idealdir. Kışın örtü ile saklama önerilir.',
+    images: [img('1600210492486-724fe5c67fb0'), img('1600585154340-1e1c4f9c4d4a')],
+    priceUsd: 1890,
+    stockStatus: 'pre_order',
+    leadTimeDays: 28,
+    categoryAnswers: {
+      q_bahce_malzeme: 'FSC teak masif',
+      q_bahce_kapasite: '6 kişi',
+      q_bahce_koruma: 'UV yağlı finish, paslanmaz bağlantı',
+      q_bahce_kapak: 'Minder opsiyonel (su itici kumaş)',
+    },
+  },
+  {
+    id: 32,
+    name: 'Rattan Salıncak Koltuk',
+    categoryId: 8,
+    description:
+      'Balkon ve bahçe için tek kişilik salıncak koltuk; el örgü sentetik rattan UV dayanımlıdır. Çelik iskelet toz boyalıdır; minder seti 5 cm kalınlığında quick-dry dolguludur.\n\nTavan veya pergola askısı ayrı satılır. Maksimum taşıma kapasitesi 120 kg’dır.\n\nİç mekân kapalı balkonlarda da kullanılabilir.',
+    images: [img('1600585154526-990dced4db0d'), img('1600210492486-724fe5c67fb0')],
+    priceUsd: 420,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_bahce_malzeme: 'Sentetik rattan, çelik gövde',
+      q_bahce_kapasite: '1 kişi',
+      q_bahce_koruma: 'UV stabil, pas önleyici kaplama',
+      q_bahce_kapak: 'Çıkarılabilir minder (yıkanabilir)',
+    },
+  },
+  {
+    id: 33,
+    name: 'Alüminyum Lounge Şezlong',
+    categoryId: 8,
+    description:
+      'Havuz başı ve teras için ayarlanabilir sırtlı şezlong. Alüminyum gövde hafif ve paslanmazdır; Textilene örgü nefes alır ve hızlı kurur.\n\n5 kademeli sırt eğimi ve çıkarılabilir baş yastığı konfor sunar. Katlanır ayaklar depolamayı kolaylaştırır.\n\nÇift alımda minder ve tekerlekli servis arabası paketi indirimlidir.',
+    images: [img('1600585154526-990dced4db0d')],
+    priceUsd: 245,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_bahce_malzeme: 'Alüminyum + Textilene',
+      q_bahce_kapasite: '1 kişi',
+      q_bahce_koruma: 'IP44 uyumlu kumaş',
+      q_bahce_kapak: 'Baş yastığı dahil',
+    },
+  },
+  {
+    id: 34,
+    name: 'Balkon Bistro Seti (2 Kişi)',
+    categoryId: 8,
+    description:
+      'Küçük balkonlar için kompakt bistro seti: 70 cm yuvarlak masa ve iki sandalye. Toz boyalı metal gövde ve ahşap görünümlü laminat tabla hafif ve dayanıklıdır.\n\nKatlanır sandalyeler kışın iç mekânda saklanabilir. Set tek kutu halinde gönderilir.\n\nRenk: antrasit + teak desen.',
+    images: [img('1600585154340-1e1c4f9c4d4a'), img('1600210492486-724fe5c67fb0')],
+    priceUsd: 198,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_bahce_malzeme: 'Metal + laminat tabla',
+      q_bahce_kapasite: '2 kişi',
+      q_bahce_koruma: 'Pas önleyici boya',
+      q_bahce_kapak: '—',
+    },
+  },
+  {
+    id: 35,
+    name: 'Saksılı Bahçe Bankı',
+    categoryId: 8,
+    description:
+      'Bahçe yolları ve giriş holleri için saksı entegreli bank. Orta bölmede geniş saksı alanı; yan oturma minderleri çıkarılabilir.\n\nImpregnasyonlu çam ahşap dış mekâna uygundur; yıllık vernik önerilir. Çelik bağlantılar paslanmaz kaplamalıdır.\n\nÖzel uzunluk üretimi 3 hafta terminlidir.',
+    images: [img('1600585154340-1e1c4f9c4d4a')],
+    priceUsd: 310,
+    stockStatus: 'pre_order',
+    leadTimeDays: 22,
+    categoryAnswers: {
+      q_bahce_malzeme: 'Impregnasyonlu çam',
+      q_bahce_kapasite: '2 kişi oturma',
+      q_bahce_koruma: 'Zemin teması için ayarlı ayak',
+      q_bahce_kapak: 'Drenaj delikli saksı bölmesi',
+    },
+  },
+  {
+    id: 36,
+    name: 'Çekyat Üçlü Kanepe',
+    categoryId: 1,
+    description:
+      'Gündüz kanepe, gece yatak işlevi gören üçlü çekyat. Orta bölüm katlanarak 140x200 cm uyku alanı oluşturur; mekanizma metal ray üzerinde sessiz çalışır.\n\nNefes alan kumaş döşeme ve yüksek yoğunluklu sünger uzun ömürlü konfor sağlar. Çıkarılabilir kılıf yıkanabilir.\n\nMisafir odası ve stüdyo daireler için idealdir. Kurulum gerektirmez.',
+    images: [img('1555041469-a586c61ea9bc'), img('1493663284031-b7e3aefcae8c')],
+    priceUsd: 799,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_mob_olcu: '210 x 95 x 88 cm (açık yatak 140x200)',
+      q_mob_malzeme: 'Polyester kumaş, metal mekanizma',
+      q_mob_renk: 'Gri (kartel)',
+      q_mob_bakim: 'Düzenli havalandırma; leke temizleyici',
+    },
+  },
+  {
+    id: 37,
+    name: 'Açılır Yemek Masası',
+    categoryId: 1,
+    description:
+      'Dar yemek odaları için açılır masa: kapalı 160 cm, açık 220 cm. Orta yaprak saklama bölmesinde saklanır; açma mekanizması tek kişi ile kullanılabilir.\n\nMasif ceviz kaplama ve siyah metal ayak modern-klasik uyum sağlar. Kenar bant koruyucu çizilmeye karşı dayanıklıdır.\n\n6 kişilik kapalı, 10 kişilik açık konfigürasyon.',
+    images: [img('1617806118233-18e1de247200'), img('1615874959474-d60996a81fe8')],
+    priceUsd: 1050,
+    stockStatus: 'pre_order',
+    leadTimeDays: 25,
+    categoryAnswers: {
+      q_mob_olcu: '160–220 x 90 x 76 cm',
+      q_mob_malzeme: 'Ceviz laminat tabla, metal ayak',
+      q_mob_renk: 'Orta ceviz',
+      q_mob_bakim: 'Sıcak tabak altlığı kullanın',
+    },
+  },
+  {
+    id: 38,
+    name: 'Ayaklı Vitrin Büfe',
+    categoryId: 1,
+    description:
+      'Salon ve yemek odası için cam kapaklı vitrin büfe. Üç cam raf koleksiyon ve servis takımlarını sergiler; alt kapalı dolap soft-close kapaklıdır.\n\nLED iç aydınlatma (opsiyonel) vitrin içeriğini vurgular. Antrasit gövde ve pirinç kulplar premium bir görünüm sunar.\n\nDuvara sabitleme kiti dahildir.',
+    images: [img('1631679706909-1844bbd07221'), img('1618221195710-dd6b41faaea6')],
+    priceUsd: 890,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_mob_olcu: '100 x 40 x 160 cm',
+      q_mob_malzeme: 'MDF gövde, temperli cam',
+      q_mob_renk: 'Antrasit / pirinç aksesuar',
+      q_mob_bakim: 'Cam temizleyici; nemli bez gövde',
+    },
+  },
+  {
+    id: 39,
+    name: 'Ayakta Çalışma Masası',
+    categoryId: 2,
+    description:
+      'Elektrikli yükseklik ayarlı ayakta çalışma masası; 72–120 cm arası sessiz motor ile geçiş yapar. Hafızalı preset ile oturma ve ayakta pozisyon kaydedilir.\n\n120x60 cm tabla çift monitör için uygundur; kablo tepsisi ve gromet dahildir. Çarpışma algılama motoru güvenli geri çekilir.\n\n5 yıl motor garantisi. Kurulum 15 dakika.',
+    images: [img('1518455027359-f3f8164ba6bd'), img('1580480055273-228ff5388ef8')],
+    priceUsd: 649,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_ofis_ergo: '72–120 cm ayarlı, preset hafıza',
+      q_ofis_garanti: '5 yıl motor',
+      q_ofis_kapasite: '80 kg yük (sabit zemin)',
+      q_ofis_kablo: 'Gromet + tepsi',
+    },
+  },
+  {
+    id: 40,
+    name: 'Misafir Sandalyesi (4’lü Stack)',
+    categoryId: 2,
+    description:
+      'Toplantı ve eğitim salonları için istiflenebilir misafir sandalyesi. Dört adet set halinde; plastik oturak ve sırt hafif taşınır.\n\nKrom kaplama metal iskelet 150 kg taşıma kapasitesine uygundur. Oturak üstü file nefes alır.\n\nKurumsal alımlarda logo baskısı yapılabilir.',
+    images: [img('1497366216548-37526070297c')],
+    priceUsd: 220,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_ofis_ergo: 'İstiflenebilir, 4’lü set',
+      q_ofis_garanti: '1 yıl',
+      q_ofis_kapasite: '150 kg / sandalye',
+      q_ofis_kablo: '—',
+    },
+  },
+  {
+    id: 41,
+    name: 'Resepsiyon Bankosu',
+    categoryId: 2,
+    description:
+      'Ofis ve klinik lobileri için L tipi resepsiyon bankosu. Ön panel laminat veya lake seçenekli; üst tezgah kuvars veya solid surface.\n\nGizli kablo kanalı ve LED alt aydınlatma opsiyoneldir. Logo baskı ve ölçüye özel üretim standarttır.\n\nMontaj ve elektrik yönlendirmesi proje ekibi tarafından planlanır.',
+    images: [img('1497366216548-37526070297c'), img('1431540015161-0bf4a2d490fe')],
+    priceUsd: 2450,
+    stockStatus: 'pre_order',
+    leadTimeDays: 42,
+    categoryAnswers: {
+      q_ofis_ergo: 'Standart 110 cm çalışma yüksekliği',
+      q_ofis_garanti: '2 yıl gövde',
+      q_ofis_kapasite: 'Sabit zemin montaj',
+      q_ofis_kablo: 'Gizli kanal + priz modülü',
+    },
+  },
+  {
+    id: 42,
+    name: 'İç İçe Sehpa Seti (3’lü)',
+    categoryId: 3,
+    description:
+      'Üç farklı boyutta iç içe sehpa seti; ihtiyaca göre tek veya çok parça kullanılır. Meşe kaplama ve siyah metal çerçeve minimal bir görünüm sunar.\n\nEn büyük tabla 60x60 cm; en küçük 40x40 cm. Zemin koruyucu keçe ayaklarda standarttır.\n\nHızlı kargo; montaj gerektirmez.',
+    images: [img('1532372320572-cda25653a26d'), img('1600585154526-990dced4db0d')],
+    priceUsd: 275,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_sehpa_tabla: '60 / 50 / 40 cm kare',
+      q_sehpa_raf: '—',
+      q_sehpa_ayak: 'Siyah metal',
+      q_sehpa_yukseklik: '45 / 40 / 35 cm',
+    },
+  },
+  {
+    id: 43,
+    name: 'C Sehpa Kaydırılabilir',
+    categoryId: 3,
+    description:
+      'Kanepe altına kaydırılan C form sehpa; laptop, kahve ve atıştırmalık için ideal. Ayarlanabilir yükseklik 58–70 cm.\n\nBamboo tabla sürdürülebilir malzemedir; metal gövde stabil durur. Tekerlekli alt versiyon ayrı kodla sipariş edilir.',
+    images: [img('1616628182502-6c2a9c0a6e0e')],
+    priceUsd: 89,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_sehpa_tabla: '45 x 30 cm',
+      q_sehpa_raf: '—',
+      q_sehpa_ayak: 'C profil metal',
+      q_sehpa_yukseklik: '58–70 cm ayarlı',
+    },
+  },
+  {
+    id: 44,
+    name: 'Aynalı Şifonyer Geniş',
+    categoryId: 4,
+    description:
+      'Yatak odası için aynalı üst panel ve yedi çekmeceli geniş şifonyer. Ayna tam boy veya yarım boy seçenekli; çerçeve mat altın veya siyah.\n\nÇekmece içi kadife kaplı takı bölmeleri opsiyoneldir. Soft-close raylar sessiz kapanır.\n\nKomodin ve baza seti ile renk uyumu sağlanır.',
+    images: [img('1615529182904-14819c35db37'), img('1618220179428-22790b461013')],
+    priceUsd: 520,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_yatak_ebat: '140 x 48 x 100 cm',
+      q_yatak_malzeme: 'Beyaz lake + ayna',
+      q_yatak_dep: '7 çekmece',
+      q_yatak_set: 'Şifonyer (aynalı)',
+    },
+  },
+  {
+    id: 45,
+    name: 'Çift Komodin Seti',
+    categoryId: 4,
+    description:
+      'Yatak başı için eşleşen iki komodin; USB şarj çıkışlı üst tabla opsiyoneldir. Gece lambası ve telefon için yeterli alan.\n\nMat antrasit gövde ve ahşap görünümlü çekmece ön panel. Set halinde tek fiyat avantajı.\n\nMontajsız kullanım; duvara sabitleme çocuklu haneler için önerilir.',
+    images: [img('1618220179428-22790b461013')],
+    priceUsd: 328,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_yatak_ebat: '50 x 40 x 52 cm (x2)',
+      q_yatak_malzeme: 'Laminat + metal kulp',
+      q_yatak_dep: 'Çekmece + USB (opsiyonel)',
+      q_yatak_set: '2 adet komodin',
+    },
+  },
+  {
+    id: 46,
+    name: 'Ayakkabılık Dolabı',
+    categoryId: 5,
+    description:
+      'Antre için dar ayakkabılık; 12 çift kapasiteli havalandırmalı bölmeler. Üst raf çanta ve anahtarlık için kullanılır.\n\nKapaklı model toz birikimini azaltır. Beyaz ve meşe renk seçenekleri stoktan gönderilir.\n\nDuvara sabitleme aparatı dahildir.',
+    images: [img('1558618666-fcd25c85cd64')],
+    priceUsd: 195,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_dep_ic: '12 çift + üst raf',
+      q_dep_malzeme: 'MDF laminat',
+      q_dep_kapak: 'Menteşeli kapak',
+      q_dep_olcu: '80 x 35 x 110 cm',
+    },
+  },
+  {
+    id: 47,
+    name: 'Açık Raf Ünitesi 5 Kat',
+    categoryId: 5,
+    description:
+      'Çocuk odası, ofis ve atölye için açık raf ünitesi. Beş ayarlanabilir raf; metal iskelet ve MDF raflar.\n\nKitap, kutu ve dekoratif objeler için modüler kullanım. Raf başına 25 kg önerilir.\n\nEk raf ve tekerlek kiti aksesuar olarak satılır.',
+    images: [img('1594620302200-9a762244a156')],
+    priceUsd: 125,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_dep_ic: '5 ayarlı raf',
+      q_dep_malzeme: 'Metal + MDF',
+      q_dep_kapak: 'Açık raf',
+      q_dep_olcu: '80 x 40 x 180 cm',
+    },
+  },
+  {
+    id: 48,
+    name: 'Kavisli Yer Lambası',
+    categoryId: 6,
+    description:
+      'Okuma köşesi için kavisli yer lambası; 180 cm yükseklikte ince profil. 12W LED başlık 3000K sıcak ışık verir; baş yönlendirmesi 350° döner.\n\nMermer desenli ağır taban devrilmeyi önler. Ayak altı keçe zemin korur.\n\nDimmer uyumlu dimmer ayrı satılır.',
+    images: [img('1507473885765-e6ed057f782c'), img('1513506003901-1e6a229e2d15')],
+    priceUsd: 135,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_aydin_w: '12W LED 3000K',
+      q_aydin_mont: 'Zemin, kavisli kol',
+      q_aydin_dim: 'Harici dimmer uyumlu',
+      q_aydin_ip: 'IP20',
+    },
+  },
+  {
+    id: 49,
+    name: 'Sarkıt Avize Seti (2’li)',
+    categoryId: 6,
+    description:
+      'Mutfak ada ve yemek masası üzeri için ikili sarkıt set. Mat siyah gövde ve opal cam diffuser yumuşak ışık dağıtır.\n\nE27 duy; 2×8W LED önerilir. Kablo uzunluğu tavan yüksekliğine göre kesilir.\n\nElektrik bağlantısı yetkili teknisyen tarafından yapılmalıdır.',
+    images: [img('1524484485831-a97ca0aa77be')],
+    priceUsd: 178,
+    stockStatus: 'pre_order',
+    leadTimeDays: 14,
+    categoryAnswers: {
+      q_aydin_w: '2× E27 (8W LED önerilir)',
+      q_aydin_mont: 'Tavan sarkıt',
+      q_aydin_dim: 'Duvar anahtarı',
+      q_aydin_ip: 'IP20',
+    },
+  },
+  {
+    id: 50,
+    name: 'Duvar Apligi Çift (Set)',
+    categoryId: 6,
+    description:
+      'Koridor ve yatak odası için çift duvar apligi. Yukarı-aşağı ışık yönlendirmeli başlık dekoratif duvar wash etkisi yaratır.\n\nG9 LED ampul dahil değildir; 3W önerilir. Pirinç ve mat siyah finish seçenekleri.\n\nMontaj deliği şablonu kutuda yer alır.',
+    images: [img('1513506003901-1e6a229e2d15')],
+    priceUsd: 98,
+    stockStatus: 'in_stock',
+    leadTimeDays: null,
+    categoryAnswers: {
+      q_aydin_w: '2× G9 (3W LED önerilir)',
+      q_aydin_mont: 'Duvar aplik',
+      q_aydin_dim: 'Anahtarlı devre',
+      q_aydin_ip: 'IP20',
+    },
+  },
+]

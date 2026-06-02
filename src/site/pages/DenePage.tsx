@@ -5,7 +5,7 @@ import { useCatalog } from '../../core/context/CatalogContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { formatUsdAndTry } from '../../shared/formatPrice'
-import { checkoutPath } from '../sitePaths'
+import { checkoutPath, productPath } from '../sitePaths'
 
 export function DenePage() {
   const { products } = useCatalog()
@@ -81,7 +81,7 @@ export function DenePage() {
                       >
                         Sepete ekle
                       </button>
-                      <Link to={`/urun/${product.id}`} className="site-btn-ghost px-4 py-2.5">
+                      <Link to={productPath(product)} className="site-btn-ghost px-4 py-2.5">
                         Detay
                       </Link>
                     </div>

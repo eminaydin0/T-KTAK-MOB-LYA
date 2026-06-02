@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { RequireAdmin } from '../admin/components/RequireAdmin'
 import { AdminLayout } from '../admin/layouts/AdminLayout'
 import { AdminCarouselPage } from '../admin/pages/AdminCarouselPage'
@@ -25,6 +25,7 @@ import { GizlilikPage } from '../site/pages/GizlilikPage'
 import { HomePage } from '../site/pages/HomePage'
 import { KvkkPage } from '../site/pages/KvkkPage'
 import { PackagePage } from '../site/pages/PackagePage'
+import { NotFoundPage } from '../site/pages/NotFoundPage'
 import { ProductDetailPage } from '../site/pages/ProductDetailPage'
 
 export function AppRoutes() {
@@ -32,7 +33,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="kategori/:categoryId" element={<CategoryPage />} />
+        <Route path="kategori/:categorySlug" element={<CategoryPage />} />
         <Route path="sepet" element={<CartPage />} />
         <Route path="odeme" element={<CheckoutPage />} />
         <Route path="odeme/basarili" element={<CheckoutSuccessPage />} />
@@ -41,7 +42,8 @@ export function AppRoutes() {
         <Route path="gizlilik" element={<GizlilikPage />} />
         <Route path="kvkk" element={<KvkkPage />} />
         <Route path="paket/:packageSlug" element={<PackagePage />} />
-        <Route path="urun/:productId" element={<ProductDetailPage />} />
+        <Route path="urun/:productSlug" element={<ProductDetailPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route
@@ -65,7 +67,6 @@ export function AppRoutes() {
         <Route path="settings" element={<AdminSettingsPage />} />
         <Route path="security" element={<AdminSecurityPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

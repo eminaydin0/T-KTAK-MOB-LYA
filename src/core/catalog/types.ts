@@ -8,6 +8,10 @@ export type CategoryQuestion = {
 export type CatalogCategory = {
   id: number
   name: string
+  /** SEO dostu URL: /kategori/mobilya */
+  slug: string
+  /** Kategori sayfasi meta aciklama */
+  seoDescription?: string
   /** Vitrin: kategori kartı, menü; https veya data:image/... */
   imageUrl?: string
   /** Bu kategori secildiginde urun formunda gosterilecek sorular */
@@ -25,6 +29,8 @@ export const STOCK_STATUS_LABEL: Record<StockStatus, string> = {
 export type CatalogProduct = {
   id: number
   name: string
+  /** SEO dostu URL: /urun/ahsap-yemek-masasi */
+  slug: string
   categoryId: number
   description: string
   /** Gorsel listesi (https veya data:image/...); sirayla vitrin ve galeride kullanilir */

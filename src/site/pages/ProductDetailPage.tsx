@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { STOCK_STATUS_LABEL } from '../../core/catalog/types'
+import { useMemo, useState } from 'react'
+import { Link, Navigate, useParams } from 'react-router-dom'
+import { findProductByParam, isNumericRouteParam } from '../../core/catalog/catalogSlugs'
+import { productPrimaryImage, STOCK_STATUS_LABEL } from '../../core/catalog/types'
 import { useCart } from '../../core/context/CartContext'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useSite } from '../../core/context/SiteContext'
@@ -8,9 +9,11 @@ import { useExchangeRate } from '../../lib/useExchangeRate'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { SiteSpinner } from '../../shared/components/SiteSpinner'
 import { formatUsdAndTry } from '../../shared/formatPrice'
+import { SiteSeo } from '../seo/SiteSeo'
+import { absoluteUrl, productAvailabilitySchema, truncateMeta } from '../seo/seoHelpers'
 import { ProductDetailGallery } from '../components/ProductDetailGallery'
 import { SiteProductCard } from '../components/SiteProductCard'
-import { categoryPath, packagePath } from '../sitePaths'
+import { catalogAnchor, categoryPath, homePath, packagePath, productPath } from '../sitePaths'
 
 type DetailTab = 'overview' | 'specs' | 'delivery'
 
@@ -21,8 +24,7 @@ const STOCK_TONE: Record<string, string> = {
 }
 
 export function ProductDetailPage() {
-  const { productId } = useParams<{ productId: string }>()
-  const id = productId ? parseInt(productId, 10) : NaN
+  const { productSlug } = useParams<{ productSlug: string }>()
   const { products, categories, packages } = useCatalog()
   const { addProduct } = useCart()
   const [qty, setQty] = useState(1)
@@ -30,13 +32,10 @@ export function ProductDetailPage() {
   const [copied, setCopied] = useState(false)
   const { data } = useSite()
   const usdToTry = useExchangeRate()
-  const siteName = data.settings.siteName || 'Vitrin'
+  const siteName = data.settings.siteName || 'EMIN Mobilya'
   const settings = data.settings
 
-  const product = useMemo(() => {
-    if (!Number.isFinite(id)) return undefined
-    return products.find((p) => p.id === id)
-  }, [products, id])
+  const product = useMemo(() => findProductByParam(products, productSlug), [products, productSlug])
 
   const category = product ? categories.find((c) => c.id === product.categoryId) : undefined
 
@@ -63,17 +62,6 @@ export function ProductDetailPage() {
       })
       .filter((x): x is { label: string; value: string } => x !== null) ?? []
 
-  useEffect(() => {
-    if (!product) {
-      document.title = `Ürün bulunamadı — ${siteName}`
-    } else {
-      document.title = `${product.name} — ${siteName}`
-    }
-    return () => {
-      document.title = siteName
-    }
-  }, [product, siteName])
-
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -84,17 +72,29 @@ export function ProductDetailPage() {
     }
   }
 
-  if (!Number.isFinite(id) || !product) {
+  if (product && isNumericRouteParam(productSlug) && product.slug !== productSlug) {
+    return <Navigate to={productPath(product)} replace />
+  }
+
+  if (!product) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <div className="site-empty bg-white shadow-soft">
-          <p className="site-card-title text-lg">Ürün bulunamadı</p>
-          <p className="site-body mt-2">Bağlantı geçersiz veya ürün kaldırılmış olabilir.</p>
-          <Link to="/" className="site-btn-accent mt-8 px-6">
-            Ana sayfaya dön
-          </Link>
+      <>
+        <SiteSeo
+          title={`Ürün bulunamadı | ${siteName}`}
+          description="Aradığınız ürün kaldırılmış veya bağlantı geçersiz olabilir."
+          path={productSlug ? `/urun/${productSlug}` : undefined}
+          noindex
+        />
+        <div className="mx-auto max-w-lg px-4 py-20 text-center">
+          <div className="site-empty bg-white shadow-soft">
+            <p className="site-card-title text-lg">Ürün bulunamadı</p>
+            <p className="site-body mt-2">Bağlantı geçersiz veya ürün kaldırılmış olabilir.</p>
+            <Link to={homePath()} className="site-btn-accent mt-8 px-6">
+              Ana sayfaya dön
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -102,14 +102,48 @@ export function ProductDetailPage() {
   const stockLabel = STOCK_STATUS_LABEL[stockKey]
   const stockTone = STOCK_TONE[stockKey] ?? STOCK_TONE.unknown
 
-  const whatsappHref =  settings.socialWhatsApp?.trim()
+  const whatsappHref = settings.socialWhatsApp?.trim()
     ? `${settings.socialWhatsApp}${settings.socialWhatsApp.includes('?') ? '&' : '?'}text=${encodeURIComponent(`${product.name} hakkında bilgi almak istiyorum.`)}`
     : null
 
+  const seoDescription = truncateMeta(
+    `${product.name}${category ? ` — ${category.name}` : ''}. ${product.description}`
+  )
+  const path = productPath(product)
+  const primaryImage = productPrimaryImage(product)
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: truncateMeta(product.description, 300),
+    image: primaryImage ? [primaryImage] : undefined,
+    sku: `SKU-${String(product.id).padStart(4, '0')}`,
+    brand: { '@type': 'Brand', name: siteName },
+    category: category?.name,
+    offers: {
+      '@type': 'Offer',
+      price: product.priceUsd,
+      priceCurrency: 'USD',
+      availability: productAvailabilitySchema(stockKey),
+      url: absoluteUrl(path),
+    },
+  }
+
   return (
+    <>
+      <SiteSeo
+        title={`${product.name} | ${category?.name ?? 'Ürün'} | ${siteName}`}
+        description={seoDescription}
+        path={path}
+        image={primaryImage || undefined}
+        type="product"
+        jsonLd={jsonLd}
+      />
+
     <div className="site-enter pb-20">
       <nav className="site-breadcrumb mb-6" aria-label="Sayfa yolu">
-        <Link to="/" className="site-link">
+        <Link to={homePath()} className="site-link">
           Ana sayfa
         </Link>
         <span className="text-stone-300" aria-hidden>
@@ -117,7 +151,7 @@ export function ProductDetailPage() {
         </span>
         {category ? (
           <>
-            <Link to={categoryPath(category.id)} className="transition duration-site ease-site hover:text-cotta">
+            <Link to={categoryPath(category)} className="site-link">
               {category.name}
             </Link>
             <span className="text-stone-300" aria-hidden>
@@ -126,7 +160,7 @@ export function ProductDetailPage() {
           </>
         ) : (
           <>
-            <Link to="/#catalog" className="transition duration-site ease-site hover:text-cotta">
+            <Link to={catalogAnchor()} className="site-link">
               Katalog
             </Link>
             <span className="text-stone-300" aria-hidden>
@@ -145,7 +179,7 @@ export function ProductDetailPage() {
         <div className="flex min-w-0 flex-col gap-5">
           <div className="flex flex-wrap items-center gap-2">
             {category ? (
-              <Link to={categoryPath(category.id)} className="site-chip">
+              <Link to={categoryPath(category)} className="site-chip">
                 {category.imageUrl?.trim() ? (
                   <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-line">
                     <ImageThumb
@@ -393,5 +427,6 @@ export function ProductDetailPage() {
         </section>
       ) : null}
     </div>
+    </>
   )
 }

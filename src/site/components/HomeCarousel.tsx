@@ -3,19 +3,27 @@ import type { CarouselSlide } from '../../core/site/types'
 
 type Props = {
   slides: CarouselSlide[]
-  variant?: 'card' | 'immersive'
+  variant?: 'card' | 'immersive' | 'cinema'
+  onSlideChange?: (index: number) => void
 }
 
 const AUTO_MS = 7000
 
-export function HomeCarousel({ slides, variant = 'card' }: Props) {
+export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props) {
   const sorted = [...slides].sort((a, b) => a.order - b.order)
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
 
+  const cinema = variant === 'cinema'
+  const immersive = variant === 'immersive' || cinema
+
   useEffect(() => {
     setI(0)
   }, [slides])
+
+  useEffect(() => {
+    onSlideChange?.(i)
+  }, [i, onSlideChange])
 
   useEffect(() => {
     for (const s of sorted) {
@@ -43,15 +51,18 @@ export function HomeCarousel({ slides, variant = 'card' }: Props) {
   if (sorted.length === 0) return null
 
   const slide = sorted[i]!
-  const immersive = variant === 'immersive'
 
-  const shell = immersive
-    ? 'relative w-full overflow-hidden bg-stone-100'
-    : 'site-card flex h-full flex-col overflow-hidden'
+  const shell = cinema
+    ? 'absolute inset-0 h-full w-full overflow-hidden'
+    : immersive
+      ? 'relative w-full overflow-hidden bg-stone-100'
+      : 'site-card flex h-full flex-col overflow-hidden'
 
-  const frameClass = immersive
-    ? 'relative aspect-[2.1/1] max-h-[min(36vh,400px)] min-h-[200px] w-full'
-    : 'relative min-h-[200px] w-full sm:min-h-[220px] lg:aspect-[2.25/1] lg:max-h-[300px]'
+  const frameClass = cinema
+    ? 'relative h-full min-h-[72dvh] w-full sm:min-h-[78dvh]'
+    : immersive
+      ? 'relative aspect-[4/5] max-h-[min(68vh,640px)] min-h-[280px] w-full sm:aspect-[16/10] lg:aspect-[2.2/1] lg:max-h-[min(52vh,560px)]'
+      : 'relative min-h-[200px] w-full sm:min-h-[220px] lg:aspect-[2.25/1] lg:max-h-[300px]'
 
   return (
     <section
@@ -69,8 +80,10 @@ export function HomeCarousel({ slides, variant = 'card' }: Props) {
             key={s.id}
             src={s.imageUrl || 'https://via.placeholder.com/1200x500?text=Gorsel'}
             alt={s.title || 'Slayt görseli'}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[900ms] ease-out motion-reduce:transition-none ${
-              idx === i ? 'z-[1] opacity-100' : 'z-0 opacity-0'
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-soft ease-soft motion-reduce:transition-none ${
+              idx === i
+                ? `z-[1] opacity-100 ${cinema || immersive ? 'motion-safe:animate-home-ken-burns motion-reduce:animate-none' : ''}`
+                : 'z-0 scale-100 opacity-0'
             }`}
             loading={idx <= 1 ? 'eager' : 'lazy'}
             decoding="async"
@@ -78,18 +91,20 @@ export function HomeCarousel({ slides, variant = 'card' }: Props) {
           />
         ))}
 
-        <div
-          className={
-            immersive
-              ? 'pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-stone-950/70 via-transparent to-stone-900/5'
-              : 'pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-white/90 via-white/40 to-transparent'
-          }
-        />
+        {!cinema ? (
+          <div
+            className={
+              immersive
+                ? 'pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-stone-950/70 via-transparent to-stone-900/5'
+                : 'pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-white/90 via-white/40 to-transparent'
+            }
+          />
+        ) : null}
         {!immersive ? (
           <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-stone-900/20 via-transparent to-transparent" />
         ) : null}
 
-        {immersive ? (
+        {immersive && !cinema ? (
           <div className="absolute inset-x-0 bottom-0 z-[3] flex items-end justify-between gap-3 px-4 pb-3 pt-10 sm:px-5 sm:pb-4">
             <div className="min-w-0 text-left text-white">
               {slide.linkUrl.trim() ? (
@@ -118,7 +133,7 @@ export function HomeCarousel({ slides, variant = 'card' }: Props) {
               </span>
             ) : null}
           </div>
-        ) : (
+        ) : !cinema ? (
           <div className="absolute bottom-0 left-0 right-0 z-[3] flex max-w-[85%] flex-col justify-end p-5 sm:p-6">
             {slide.linkUrl.trim() ? (
               <a
@@ -136,43 +151,51 @@ export function HomeCarousel({ slides, variant = 'card' }: Props) {
               </>
             )}
           </div>
-        )}
+        ) : null}
 
         {sorted.length > 1 ? (
           <>
-            <div className="absolute bottom-0 left-0 right-0 z-[4] h-px bg-white/20">
-              <div
-                key={`${i}-${paused}`}
-                className="h-full origin-left bg-cotta motion-safe:animate-carousel-progress motion-reduce:w-full motion-reduce:animate-none"
-              />
-            </div>
-            <div className="absolute bottom-3 right-3 z-[5] flex items-center gap-1.5 sm:bottom-3.5 sm:right-4">
+            {!cinema ? (
+              <div className="absolute bottom-0 left-0 right-0 z-[4] h-px bg-white/20">
+                <div
+                  key={`${i}-${paused}`}
+                  className="h-full origin-left bg-cotta motion-safe:animate-carousel-progress motion-reduce:w-full motion-reduce:animate-none"
+                />
+              </div>
+            ) : null}
+            <div
+              className={`absolute z-[5] flex items-center gap-1.5 ${
+                cinema ? 'bottom-6 right-6 sm:bottom-8 sm:right-10' : 'bottom-3 right-3 sm:bottom-3.5 sm:right-4'
+              }`}
+            >
               <button
                 type="button"
                 aria-label="Önceki slayt"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/25 bg-black/35 text-sm text-white backdrop-blur-sm transition hover:bg-black/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/30 text-sm text-white backdrop-blur-sm transition hover:bg-black/50"
                 onClick={() => go(i - 1)}
               >
                 ‹
               </button>
-              <div className="hidden items-center gap-1 rounded-full bg-black/35 px-2 py-1 backdrop-blur-sm sm:flex">
-                {sorted.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    aria-label={`Slayt ${idx + 1}`}
-                    aria-current={idx === i}
-                    className={`rounded-full transition-all ${
-                      idx === i ? 'h-1.5 w-4 bg-cotta' : 'h-1.5 w-1.5 bg-white/50 hover:bg-white/80'
-                    }`}
-                    onClick={() => go(idx)}
-                  />
-                ))}
-              </div>
+              {!cinema ? (
+                <div className="hidden items-center gap-1 rounded-full bg-black/35 px-2 py-1 backdrop-blur-sm sm:flex">
+                  {sorted.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      aria-label={`Slayt ${idx + 1}`}
+                      aria-current={idx === i}
+                      className={`rounded-full transition-all ${
+                        idx === i ? 'h-1.5 w-4 bg-cotta' : 'h-1.5 w-1.5 bg-white/50 hover:bg-white/80'
+                      }`}
+                      onClick={() => go(idx)}
+                    />
+                  ))}
+                </div>
+              ) : null}
               <button
                 type="button"
                 aria-label="Sonraki slayt"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/25 bg-black/35 text-sm text-white backdrop-blur-sm transition hover:bg-black/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/30 text-sm text-white backdrop-blur-sm transition hover:bg-black/50"
                 onClick={() => go(i + 1)}
               >
                 ›

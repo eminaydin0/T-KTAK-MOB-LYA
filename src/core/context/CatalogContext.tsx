@@ -17,6 +17,7 @@ import {
   saveCatalog,
 } from '../catalog/storage'
 import { applyPackageSlugsToProducts, defaultPackages } from '../catalog/defaultPackageSeed'
+import { ensureUniqueSlug, slugifyTr } from '../catalog/slugify'
 
 export type CategoryQuestionDraft = { label: string; placeholder?: string }
 
@@ -49,7 +50,13 @@ type CatalogContextValue = {
   addCategory: (name: string, questionDrafts?: CategoryQuestionDraft[], imageUrl?: string) => void
   updateCategory: (
     id: number,
-    patch: { name?: string; questions?: CategoryQuestion[]; imageUrl?: string }
+    patch: {
+      name?: string
+      questions?: CategoryQuestion[]
+      imageUrl?: string
+      slug?: string
+      seoDescription?: string
+    }
   ) => void
   addProduct: (input: AddProductInput) => void
   updateProduct: (
@@ -65,6 +72,7 @@ type CatalogContextValue = {
         | 'stockStatus'
         | 'leadTimeDays'
         | 'categoryAnswers'
+        | 'slug'
       >
     >
   ) => void
@@ -85,17 +93,7 @@ type CatalogContextValue = {
 }
 
 function slugifyPackageName(name: string) {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/ğ/g, 'g')
-    .replace(/ü/g, 'u')
-    .replace(/ş/g, 's')
-    .replace(/ı/g, 'i')
-    .replace(/ö/g, 'o')
-    .replace(/ç/g, 'c')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+  return slugifyTr(name)
 }
 
 function uniqueSlug(base: string, existing: CatalogPackage[], exceptId?: number) {
@@ -146,21 +144,35 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
           placeholder: q.placeholder?.trim() || undefined,
         }))
       const img = imageUrl?.trim()
-      setCategories((prev) => [
-        ...prev,
-        {
-          id,
-          name: trimmed,
-          questions,
-          ...(img ? { imageUrl: img } : {}),
-        },
-      ])
+      setCategories((prev) => {
+        const used = new Set(prev.map((c) => c.slug))
+        const slug = ensureUniqueSlug(slugifyTr(trimmed), used, `kategori-${id}`)
+        return [
+          ...prev,
+          {
+            id,
+            name: trimmed,
+            slug,
+            questions,
+            ...(img ? { imageUrl: img } : {}),
+          },
+        ]
+      })
     },
     []
   )
 
   const updateCategory = useCallback(
-    (catId: number, patch: { name?: string; questions?: CategoryQuestion[]; imageUrl?: string }) => {
+    (
+      catId: number,
+      patch: {
+        name?: string
+        questions?: CategoryQuestion[]
+        imageUrl?: string
+        slug?: string
+        seoDescription?: string
+      }
+    ) => {
       setCategories((prev) =>
         prev.map((c) => {
           if (c.id !== catId) return c
@@ -174,6 +186,22 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
               next = rest as CatalogCategory
             } else {
               next = { ...next, imageUrl: t }
+            }
+          }
+          if (patch.slug !== undefined) {
+            const t = patch.slug.trim()
+            if (t) {
+              const used = new Set(prev.filter((x) => x.id !== catId).map((x) => x.slug))
+              next = { ...next, slug: ensureUniqueSlug(slugifyTr(t), used, c.slug) }
+            }
+          }
+          if (patch.seoDescription !== undefined) {
+            const t = patch.seoDescription.trim()
+            if (!t) {
+              const { seoDescription: _drop, ...rest } = next
+              next = rest as CatalogCategory
+            } else {
+              next = { ...next, seoDescription: t }
             }
           }
           return next
@@ -193,20 +221,25 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         ? Math.max(0, input.priceUsd)
         : 0
     const categoryAnswers = input.categoryAnswers ?? {}
-    setProducts((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name,
-        categoryId: input.categoryId,
-        description,
-        images,
-        priceUsd,
-        stockStatus: input.stockStatus ?? 'unknown',
-        leadTimeDays: input.leadTimeDays ?? null,
-        categoryAnswers,
-      },
-    ])
+    setProducts((prev) => {
+      const used = new Set(prev.map((p) => p.slug))
+      const slug = ensureUniqueSlug(slugifyTr(name), used, `urun-${Date.now()}`)
+      return [
+        ...prev,
+        {
+          id: Date.now(),
+          name,
+          slug,
+          categoryId: input.categoryId,
+          description,
+          images,
+          priceUsd,
+          stockStatus: input.stockStatus ?? 'unknown',
+          leadTimeDays: input.leadTimeDays ?? null,
+          categoryAnswers,
+        },
+      ]
+    })
   }, [])
 
   const updateProduct = useCallback(
@@ -223,6 +256,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
           | 'stockStatus'
           | 'leadTimeDays'
           | 'categoryAnswers'
+          | 'slug'
         >
       >
     ) => {
@@ -230,6 +264,13 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         prev.map((p) => {
           if (p.id !== id) return p
           const next: CatalogProduct = { ...p }
+          if (patch.slug !== undefined) {
+            const t = patch.slug.trim()
+            if (t) {
+              const used = new Set(prev.filter((x) => x.id !== id).map((x) => x.slug))
+              next.slug = ensureUniqueSlug(slugifyTr(t), used, p.slug)
+            }
+          }
           if (patch.name !== undefined) next.name = patch.name.trim()
           if (patch.description !== undefined) {
             next.description = patch.description.trim() || 'Aciklama eklenmedi'

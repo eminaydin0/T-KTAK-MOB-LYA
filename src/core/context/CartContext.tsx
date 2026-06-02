@@ -18,6 +18,14 @@ type AddItemInput = {
   priceUsd: number
   imageUrl?: string
   qty?: number
+  listPriceUsd?: number
+  packageLabel?: string
+}
+
+type AddPackageOptions = {
+  openPreview?: boolean
+  bundleDiscountPercent?: number
+  packageName?: string
 }
 
 type CartContextValue = {
@@ -28,7 +36,7 @@ type CartContextValue = {
   lastAddedName: string | null
   addItem: (input: AddItemInput, options?: { openPreview?: boolean }) => void
   addProduct: (product: CatalogProduct, qty?: number, options?: { openPreview?: boolean }) => void
-  addPackageProducts: (products: CatalogProduct[], options?: { openPreview?: boolean }) => void
+  addPackageProducts: (products: CatalogProduct[], options?: AddPackageOptions) => void
   updateQty: (productId: number, qty: number) => void
   removeItem: (productId: number) => void
   clear: () => void
@@ -63,6 +71,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
             priceUsd: Math.max(0, input.priceUsd),
             qty,
             ...(input.imageUrl?.trim() ? { imageUrl: input.imageUrl.trim() } : {}),
+            ...(input.listPriceUsd != null && input.listPriceUsd > input.priceUsd
+              ? { listPriceUsd: input.listPriceUsd }
+              : {}),
+            ...(input.packageLabel ? { packageLabel: input.packageLabel } : {}),
           },
         ]
       }
@@ -94,21 +106,40 @@ export function CartProvider({ children }: { children: ReactNode }) {
   )
 
   const addPackageProducts = useCallback(
-    (products: CatalogProduct[], options?: { openPreview?: boolean }) => {
+    (products: CatalogProduct[], options?: AddPackageOptions) => {
       if (products.length === 0) return
-      for (const product of products) {
+      const discount = Math.min(50, Math.max(0, Math.floor(options?.bundleDiscountPercent ?? 0)))
+      const partsTotal = products.reduce((sum, p) => sum + p.priceUsd, 0)
+      const factor = partsTotal > 0 && discount > 0 ? 1 - discount / 100 : 1
+      const packageLabel = options?.packageName?.trim() || undefined
+
+      products.forEach((product, index) => {
+        let priceUsd = Math.round(product.priceUsd * factor * 100) / 100
+        if (index === products.length - 1 && discount > 0 && partsTotal > 0) {
+          const prevSum = products
+            .slice(0, -1)
+            .reduce((sum, p) => sum + Math.round(p.priceUsd * factor * 100) / 100, 0)
+          const bundleTotal = Math.round(partsTotal * factor * 100) / 100
+          priceUsd = Math.round((bundleTotal - prevSum) * 100) / 100
+        }
         addItem(
           {
             productId: product.id,
             productName: product.name,
-            priceUsd: product.priceUsd,
+            priceUsd,
+            listPriceUsd: discount > 0 ? product.priceUsd : undefined,
             imageUrl: productPrimaryImage(product),
             qty: 1,
+            packageLabel,
           },
           { openPreview: false }
         )
-      }
-      setLastAddedName(`${products.length} parçalık set`)
+      })
+      setLastAddedName(
+        packageLabel
+          ? `${packageLabel} (${products.length} parça${discount > 0 ? `, %${discount} indirim` : ''})`
+          : `${products.length} parçalık set`
+      )
       if (options?.openPreview !== false) setPreviewOpen(true)
     },
     [addItem]

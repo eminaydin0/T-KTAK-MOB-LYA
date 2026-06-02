@@ -30,6 +30,7 @@ export function AdminProductsPage() {
   const [detailId, setDetailId] = useState<number | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState('')
+  const [slug, setSlug] = useState('')
   const [categoryId, setCategoryId] = useState(0)
   const [description, setDescription] = useState('')
   /** Bos satirlar kayitta atilir */
@@ -93,6 +94,7 @@ export function AdminProductsPage() {
   const resetForm = () => {
     setEditingId(null)
     setName('')
+    setSlug('')
     setDescription('')
     setImages([''])
     setPriceUsdInput('0')
@@ -118,6 +120,7 @@ export function AdminProductsPage() {
     if (!p) return
     setEditingId(id)
     setName(p.name)
+    setSlug(p.slug)
     setCategoryId(p.categoryId)
     setDescription(p.description)
     setImages(p.images?.length ? [...p.images] : [''])
@@ -181,6 +184,7 @@ export function AdminProductsPage() {
     if (editingId !== null) {
       updateProduct(editingId, {
         name,
+        slug,
         categoryId,
         description,
         images: imgs,
@@ -251,6 +255,24 @@ export function AdminProductsPage() {
                 autoFocus
               />
             </Field>
+
+            {isEdit ? (
+              <Field
+                label="URL slug"
+                htmlFor="prd-slug"
+                className="sm:col-span-2"
+                hint="Vitrin: /urun/slug — ürün adı değişince otomatik güncellenmez"
+              >
+                <input
+                  id="prd-slug"
+                  className={inputClass}
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="ornek-urun"
+                  required
+                />
+              </Field>
+            ) : null}
 
             <Field label="Kategori" htmlFor="prd-cat">
               <select

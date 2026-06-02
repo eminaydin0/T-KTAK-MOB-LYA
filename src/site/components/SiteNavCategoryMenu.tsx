@@ -5,6 +5,7 @@ import { categoryPath } from '../sitePaths'
 
 type Item = {
   id: number
+  slug: string
   name: string
   count: number
   imageUrl?: string
@@ -43,8 +44,8 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
 
   if (categories.length === 0) return null
 
-  const activeMatch = location.pathname.match(/^\/kategori\/(\d+)/)
-  const activeId = activeMatch ? parseInt(activeMatch[1]!, 10) : null
+  const activeMatch = location.pathname.match(/^\/kategori\/([^/]+)/)
+  const activeSlug = activeMatch ? decodeURIComponent(activeMatch[1]!) : null
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
@@ -53,7 +54,7 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
         className={`site-btn gap-2 border px-4 py-2.5 shadow-soft ${
           open
             ? 'border-cotta bg-cotta text-white'
-            : activeId != null
+            : activeSlug != null
               ? 'border-cotta bg-white text-cotta'
               : 'border-line bg-white text-stone-700 hover:border-cotta hover:text-cotta'
         }`}
@@ -78,8 +79,8 @@ export function SiteNavCategoryMenu({ categories, className = '' }: Props) {
         >
           <ul className="max-h-[min(70vh,22rem)] overflow-y-auto py-2">
             {categories.map((c) => {
-              const to = categoryPath(c.id)
-              const active = activeId === c.id
+              const to = categoryPath(c)
+              const active = activeSlug === c.slug
               return (
                 <li key={c.id} role="option" aria-selected={active}>
                   <Link

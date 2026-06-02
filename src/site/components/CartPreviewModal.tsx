@@ -1,14 +1,16 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../../core/context/CartContext'
+import { useCatalog } from '../../core/context/CatalogContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { formatUsdAndTry } from '../../shared/formatPrice'
-import { cartPath, checkoutPath } from '../sitePaths'
+import { cartPath, checkoutPath, homePath, productPath } from '../sitePaths'
 
 export function CartPreviewModal() {
   const { items, previewOpen, closePreview, lastAddedName, totalItems, subtotalUsd, updateQty, removeItem } =
     useCart()
+  const { products } = useCatalog()
   const usdToTry = useExchangeRate()
   const total = formatUsdAndTry(subtotalUsd, usdToTry)
 
@@ -27,6 +29,11 @@ export function CartPreviewModal() {
   }, [previewOpen, closePreview])
 
   if (!previewOpen) return null
+
+  const productLink = (productId: number) => {
+    const p = products.find((x) => x.id === productId)
+    return p ? productPath(p) : homePath()
+  }
 
   return (
     <>
@@ -77,7 +84,7 @@ export function CartPreviewModal() {
                 return (
                   <li key={line.productId} className="flex gap-3 border border-line bg-white p-3">
                     <Link
-                      to={`/urun/${line.productId}`}
+                      to={productLink(line.productId)}
                       className="h-16 w-16 shrink-0 overflow-hidden border border-line bg-surface-muted"
                       onClick={closePreview}
                     >
@@ -90,7 +97,7 @@ export function CartPreviewModal() {
                     </Link>
                     <div className="min-w-0 flex-1">
                       <Link
-                        to={`/urun/${line.productId}`}
+                        to={productLink(line.productId)}
                         className="line-clamp-2 text-sm font-medium text-ink hover:text-cotta"
                         onClick={closePreview}
                       >

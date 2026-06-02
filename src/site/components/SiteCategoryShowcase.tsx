@@ -5,6 +5,7 @@ import { SiteSectionHeader } from './SiteSectionHeader'
 
 export type SiteCategoryCard = {
   id: number
+  slug: string
   name: string
   count: number
   imageUrl?: string
@@ -35,7 +36,7 @@ export function SiteCategoryShowcase({ categories, title, subtitle }: Props) {
         {categories.map((c) => {
           const hasImg = Boolean(c.imageUrl?.trim())
           return (
-            <Link key={c.id} to={categoryPath(c.id)} className="shop-category-tile">
+            <Link key={c.id} to={categoryPath(c)} className="shop-category-tile">
               {hasImg ? (
                 <ImageThumb
                   src={c.imageUrl!}

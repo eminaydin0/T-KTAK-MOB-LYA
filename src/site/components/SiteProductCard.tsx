@@ -4,7 +4,7 @@ import type { CatalogProduct } from '../../core/catalog/types'
 import { STOCK_STATUS_LABEL } from '../../core/catalog/types'
 import { productPrimaryImage } from '../../core/catalog/types'
 import { ImageThumb } from '../../shared/components/ImageThumb'
-import { packagePath } from '../sitePaths'
+import { packagePath, productPath } from '../sitePaths'
 
 type Props = {
   product: CatalogProduct
@@ -55,7 +55,7 @@ export function SiteProductCard({
           Sepete ekle
         </button>
         <Link
-          to={`/urun/${product.id}`}
+          to={productPath(product)}
           className="site-btn-ghost shrink-0 bg-white/95 px-3 py-2 text-xs backdrop-blur-sm"
           onClick={(e) => e.stopPropagation()}
         >
@@ -68,12 +68,12 @@ export function SiteProductCard({
   if (!compact) {
     return (
       <article className="shop-card">
-        <Link to={`/urun/${product.id}`} className="shop-card-media">
+        <Link to={productPath(product)} className="shop-card-media">
           {media}
         </Link>
         <div className="shop-card-body">
           <p className="site-caption truncate uppercase tracking-wide">{categoryName}</p>
-          <Link to={`/urun/${product.id}`}>
+          <Link to={productPath(product)}>
             <h3 className="shop-card-name mt-0.5">{product.name}</h3>
           </Link>
           <p className="site-body mt-1.5 line-clamp-3 flex-1 text-xs leading-relaxed">
@@ -97,7 +97,7 @@ export function SiteProductCard({
 
   return (
     <article className="shop-card">
-      <Link to={`/urun/${product.id}`} className="shop-card-media">
+      <Link to={productPath(product)} className="shop-card-media">
         {media}
       </Link>
       <div className="shop-card-body">
@@ -107,7 +107,7 @@ export function SiteProductCard({
             <span className="shrink-0 text-[10px] font-medium text-cotta">Paket parçası</span>
           ) : null}
         </div>
-        <Link to={`/urun/${product.id}`}>
+        <Link to={productPath(product)}>
           <h3 className="shop-card-name mt-0.5">{product.name}</h3>
         </Link>
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">

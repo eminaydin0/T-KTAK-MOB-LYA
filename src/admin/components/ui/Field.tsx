@@ -29,3 +29,5 @@ export const inputClass =
   'w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 placeholder:text-stone-400 shadow-sm transition focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/25'
 
 export const selectClass = `${inputClass} cursor-pointer`
+
+export const textareaClass = `${inputClass} resize-y min-h-[88px]`

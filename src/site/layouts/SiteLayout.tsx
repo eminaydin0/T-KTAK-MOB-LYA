@@ -112,22 +112,12 @@ export function SiteLayout() {
     }
     return categories.map((c) => ({
       id: c.id,
+      slug: c.slug,
       name: c.name,
       count: counts.get(c.id) ?? 0,
       imageUrl: c.imageUrl,
     }))
   }, [categories, products])
-
-  useEffect(() => {
-    document.title = settings.seoTitle || settings.siteName || 'EMIN'
-    let meta = document.querySelector('meta[name="description"]')
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.setAttribute('name', 'description')
-      document.head.appendChild(meta)
-    }
-    meta.setAttribute('content', settings.seoDescription || '')
-  }, [settings.seoTitle, settings.siteName, settings.seoDescription])
 
   useEffect(() => {
     document.documentElement.lang = activeLocale
@@ -178,7 +168,7 @@ export function SiteLayout() {
         )}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-line/60 bg-white/92 shadow-soft backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-line/50 bg-white/88 backdrop-blur-md">
         <div className="mx-auto grid max-w-site grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-3 sm:px-8">
           <div className="flex min-w-0 items-center justify-start gap-3 lg:gap-6">
             <button
@@ -359,7 +349,7 @@ export function SiteLayout() {
                     {categoriesWithCount.map((c) => (
                       <li key={c.id}>
                         <Link
-                          to={categoryPath(c.id)}
+                          to={categoryPath(c)}
                           className="flex items-center justify-between gap-3 py-2.5 text-sm text-stone-700 hover:text-cotta"
                           onClick={() => setMobileOpen(false)}
                         >
@@ -466,7 +456,7 @@ export function SiteLayout() {
               <ul className="space-y-2.5 text-sm">
                 {footerCategories.map((c) => (
                   <li key={c.id}>
-                    <Link to={categoryPath(c.id)} className="transition hover:text-cotta">
+                    <Link to={categoryPath(c)} className="transition hover:text-cotta">
                       {c.name}
                     </Link>
                   </li>

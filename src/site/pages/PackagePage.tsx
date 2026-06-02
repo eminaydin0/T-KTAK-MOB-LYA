@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import {
   packageBundlePriceUsd,
@@ -7,16 +7,22 @@ import {
 import { PACKAGE_KIND_LABEL, STOCK_STATUS_LABEL } from '../../core/catalog/types'
 import { useCart } from '../../core/context/CartContext'
 import { useCatalog } from '../../core/context/CatalogContext'
+import { useSite } from '../../core/context/SiteContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { ImageThumb } from '../../shared/components/ImageThumb'
 import { formatUsdAndTry } from '../../shared/formatPrice'
 import { SiteProductCard } from '../components/SiteProductCard'
+import { SiteSeo } from '../seo/SiteSeo'
+import { absoluteUrl, truncateMeta } from '../seo/seoHelpers'
+import { homePath, packagePath, packagesAnchor } from '../sitePaths'
 
 export function PackagePage() {
   const { packageSlug } = useParams<{ packageSlug: string }>()
   const { packages, products, categories } = useCatalog()
   const { addPackageProducts } = useCart()
+  const { data } = useSite()
   const usdToTry = useExchangeRate()
+  const siteName = data.settings.siteName || 'EMIN Mobilya'
 
   const pkg = useMemo(
     () => packages.find((p) => p.slug === packageSlug),
@@ -38,20 +44,45 @@ export function PackagePage() {
   const bundlePrice = formatUsdAndTry(bundleTotal, usdToTry)
   const savings = partsTotal - bundleTotal
 
-  useEffect(() => {
-    document.title = pkg ? `${pkg.name} — Paket` : 'Paket'
-  }, [pkg])
-
   if (!pkg) {
-    return <Navigate to="/#catalog" replace />
+    return <Navigate to={packagesAnchor()} replace />
+  }
+
+  const seoDescription = truncateMeta(`${pkg.tagline}. ${pkg.description}`)
+  const path = packagePath(pkg.slug)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: pkg.name,
+    description: seoDescription,
+    image: pkg.imageUrl,
+    url: absoluteUrl(path),
+    brand: { '@type': 'Brand', name: siteName },
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'USD',
+      lowPrice: bundleTotal,
+      highPrice: partsTotal,
+      offerCount: parts.length,
+    },
   }
 
   const nameOf = (cid: number) => categories.find((c) => c.id === cid)?.name ?? ''
 
   return (
+    <>
+      <SiteSeo
+        title={`${pkg.name} | ${PACKAGE_KIND_LABEL[pkg.kind]} Paketi | ${siteName}`}
+        description={seoDescription}
+        path={path}
+        image={pkg.imageUrl}
+        type="product"
+        jsonLd={jsonLd}
+      />
+
     <div className="site-enter pb-20">
       <nav className="site-breadcrumb mb-6" aria-label="Sayfa yolu">
-        <Link to="/" className="site-link">
+        <Link to={homePath()} className="site-link">
           Ana sayfa
         </Link>
         <span className="text-stone-300" aria-hidden>
@@ -120,7 +151,12 @@ export function PackagePage() {
               <button
                 type="button"
                 className="site-btn-accent px-6 py-3"
-                onClick={() => addPackageProducts(parts)}
+                onClick={() =>
+                  addPackageProducts(parts, {
+                    bundleDiscountPercent: pkg.bundleDiscountPercent,
+                    packageName: pkg.name,
+                  })
+                }
                 disabled={parts.length === 0}
               >
                 Tüm seti sepete ekle
@@ -177,5 +213,6 @@ export function PackagePage() {
         </ul>
       </section>
     </div>
+    </>
   )
 }

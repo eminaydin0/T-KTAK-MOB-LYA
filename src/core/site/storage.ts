@@ -28,10 +28,10 @@ export const defaultSiteData = (): SiteData => ({
   settings: {
     siteName: 'EMIN Mobilya',
     siteTagline:
-      'Mobilya, ofis, yatak odası ve aydınlatma — 25+ vitrin ürünü, detaylı teknik bilgiler, USD liste fiyatları',
-    seoTitle: 'EMIN Mobilya — Koltuk, masa, ofis, depolama, aydınlatma',
+      'Salon, ofis, yatak odası ve dış mekân — ölçüye özel üretim, set indirimleri ve şeffaf fiyatlandırma',
+    seoTitle: 'EMIN Mobilya | Salon, Ofis, Yatak Odası & Set Koleksiyonları',
     seoDescription:
-      'Geniş demo katalog: oturma grupları, yemek masaları, ofis mobilyası, gardırop, sehpa ve LED aydınlatma. Ürün detaylarında ölçü, malzeme ve bakım bilgileri. Fiyatlar USD; TL karşılığı güncel kur ile tahmini.',
+      'EMIN Mobilya’da oturma grupları, yemek masaları, ofis mobilyası, gardırop, mutfak adası ve bahçe setleri. Her üründe ölçü, malzeme ve termin bilgisi; hazır paketlerde set indirimi. Showroom randevusu ve ücretsiz keşif için iletişime geçin.',
     contactEmail: 'siparis@emin-mobilya.demo',
     contactPhone: '+90 (212) 555 01 23',
     contactAddress: 'Istanbul, Turkiye — Showroom randevu ile',
@@ -41,29 +41,29 @@ export const defaultSiteData = (): SiteData => ({
   },
   contentByLocale: {
     tr: {
-      heroTitle: 'Yaşam alanınız için seçilmiş mobilya koleksiyonu',
+      heroTitle: 'Sakin ve zamansız mobilya',
       heroSubtitle:
-        '25’ten fazla vitrin ürünü, altı kategoride zengin teknik özellikler ve çok görselli ürün detayları. Sepete ekleyin, ödeme adımına geçin veya showroom randevusu alın — fiyatlar USD, TL tahmini güncel kur ile.',
-      categorySectionTitle: 'Kategorilere göz atın',
-      categorySectionSubtitle: 'Bir koleksiyona tıklayarak o kategorinin ürünlerine gidin.',
-      filterSectionTitle: 'Kategori ve arama',
-      catalogSectionTitle: 'Urun vitrini',
-      demoSectionTitle: 'Ek demo: B2B ornek aileler',
+        'Oturan, çalışan, dinlenen her köşe için düşünülmüş parçalar. Ölçü ve malzeme detaylarını inceleyin; sepete ekleyin veya showroom randevusu alın.',
+      categorySectionTitle: 'Koleksiyonlar',
+      categorySectionSubtitle: 'Odanıza en uygun seriyi bulmak için kategorilere göz atın.',
+      filterSectionTitle: 'Arama ve filtrelerle istediğiniz parçaya ulaşın.',
+      catalogSectionTitle: 'Tüm parçalar',
+      demoSectionTitle: 'Ek demo: B2B örnek aileler',
       demoSectionNote:
-        'Bu bolum `data.ts` icindeki sabit B2B/B2C orneklerini gosterir (katalogdaki canli urunlerden bagimsiz vitrin).',
-      footerText: 'EMIN Mobilya — demo vitrin verisi',
+        'Bu bölüm sabit B2B/B2C örneklerini gösterir; canlı katalogdan bağımsızdır.',
+      footerText: 'EMIN Mobilya — yaşam alanlarınıza değer katan parçalar.',
     },
     en: {
-      heroTitle: 'A rich default showroom dataset',
+      heroTitle: 'Calm, timeless furniture',
       heroSubtitle:
-        'Dozens of sample products across six categories, plus carousel slides and a media library. Prices in USD with a TRY estimate.',
-      categorySectionTitle: 'Browse by category',
-      categorySectionSubtitle: 'Open a collection to see products in that category.',
-      filterSectionTitle: 'Search & category',
-      catalogSectionTitle: 'Product showcase',
+        'Thoughtfully designed pieces for every corner of home and work. Explore materials and dimensions — add to cart or book a showroom visit.',
+      categorySectionTitle: 'Collections',
+      categorySectionSubtitle: 'Browse by room and style to find the right series for your space.',
+      filterSectionTitle: 'Search and filter to find the piece you need.',
+      catalogSectionTitle: 'All pieces',
       demoSectionTitle: 'Extra demo: B2B sample families',
-      demoSectionNote: 'This block uses static B2B/B2C samples from `data.ts` (separate from the live catalog).',
-      footerText: 'EMIN Furniture — demo storefront',
+      demoSectionNote: 'This block uses static B2B/B2C samples (separate from the live catalog).',
+      footerText: 'EMIN Furniture — pieces that elevate everyday living.',
     },
   },
 })
@@ -151,6 +151,31 @@ function normalizeSettings(raw: Partial<SiteSettings> | undefined): SiteSettings
   }
 }
 
+/** Eski varsayilan metinler — load sirasinda yeni kopya ile guncellenir. */
+const LEGACY_TR_COPY: Partial<SiteContent> = {
+  heroTitle: 'Yaşam alanınız için seçilmiş mobilya koleksiyonu',
+  heroSubtitle:
+    '50’den fazla vitrin ürünü, sekiz kategoride zengin teknik özellikler ve paket setleri. Sepete ekleyin, ödeme adımına geçin veya showroom randevusu alın — fiyatlar USD, TL tahmini güncel kur ile.',
+  categorySectionTitle: 'Kategorilere göz atın',
+  categorySectionSubtitle: 'Bir koleksiyona tıklayarak o kategorinin ürünlerine gidin.',
+  filterSectionTitle: 'Kategori ve arama',
+  catalogSectionTitle: 'Urun vitrini',
+  footerText: 'EMIN Mobilya — demo vitrin verisi',
+}
+
+function refreshLegacyCopy(content: SiteContent): SiteContent {
+  const fresh = defaultSiteData().contentByLocale.tr
+  let next = content
+  for (const key of Object.keys(LEGACY_TR_COPY) as (keyof SiteContent)[]) {
+    const legacy = LEGACY_TR_COPY[key]
+    if (legacy && content[key] === legacy) {
+      if (next === content) next = { ...content }
+      next[key] = fresh[key]
+    }
+  }
+  return next
+}
+
 export function normalizeSiteData(raw: unknown): SiteData {
   const def = defaultSiteData()
   if (!raw || typeof raw !== 'object') return def
@@ -210,6 +235,10 @@ export function normalizeSiteData(raw: unknown): SiteData {
     if (!contentByLocale[lang.code]) {
       contentByLocale[lang.code] = { ...base }
     }
+  }
+
+  if (contentByLocale.tr) {
+    contentByLocale.tr = refreshLegacyCopy(contentByLocale.tr)
   }
 
   return {

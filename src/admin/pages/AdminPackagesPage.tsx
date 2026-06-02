@@ -265,7 +265,7 @@ export function AdminPackagesPage() {
       >
         <form id="admin-package-form" className="space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Paket adi" required>
+            <Field label="Paket adi">
               <input
                 className={inputClass}
                 value={form.name}

@@ -4,6 +4,7 @@ import { categoryPath } from '../sitePaths'
 
 export type HomeCategoryItem = {
   id: number
+  slug: string
   name: string
   count: number
   imageUrl?: string
@@ -20,23 +21,31 @@ export function HomeCategoryBento({ categories, title, subtitle }: Props) {
 
   return (
     <section className="site-enter" aria-labelledby="home-categories-title">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <header className="home-section-head">
         <div>
-          <h2 id="home-categories-title" className="site-section-title">
+          <p className="home-section-eyebrow">01 — Koleksiyon</p>
+          <h2 id="home-categories-title" className="home-section-title">
             {title}
           </h2>
-          {subtitle ? <p className="site-body mt-2 max-w-lg">{subtitle}</p> : null}
+          {subtitle ? <p className="home-section-lead">{subtitle}</p> : null}
         </div>
-        <Link to="/#catalog" className="site-btn-text shrink-0">
-          Tümünü gör →
+        <Link to="/#catalog" className="home-section-link">
+          Tümünü gör
+          <span aria-hidden>→</span>
         </Link>
-      </div>
+      </header>
 
-      <div className="shop-category-grid mt-8">
+      <div className="home-category-grid mt-10">
         {categories.map((c, index) => {
           const hasImg = Boolean(c.imageUrl?.trim())
+          const featured = index === 0
           return (
-            <Link key={c.id} to={categoryPath(c.id)} className="shop-category-tile">
+            <Link
+              key={c.id}
+              to={categoryPath(c)}
+              className={`home-category-tile group ${featured ? 'home-category-tile--lead' : ''}`}
+              style={{ animationDelay: `${index * 70}ms` }}
+            >
               {hasImg ? (
                 <ImageThumb
                   src={c.imageUrl!}
@@ -46,14 +55,19 @@ export function HomeCategoryBento({ categories, title, subtitle }: Props) {
                   priority={index < 4}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-stone-100 to-stone-200/80">
-                  <span className="text-3xl font-light text-stone-300">{c.name.slice(0, 1)}</span>
+                <div className="flex h-full w-full items-center justify-center bg-stone-100">
+                  <span className="text-4xl font-light text-stone-300">{c.name.slice(0, 1)}</span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <p className="text-sm font-medium text-white">{c.name}</p>
-                <p className="mt-0.5 text-xs text-white/75">{c.count} ürün</p>
+              <div className="home-category-shade" aria-hidden />
+              <div className="home-category-caption">
+                <p className="text-sm font-medium text-white sm:text-base">{c.name}</p>
+                <p className="mt-1 flex items-center gap-2 text-xs text-white/75">
+                  <span>{c.count} parça</span>
+                  <span className="home-category-arrow opacity-0 transition duration-300 group-hover:opacity-100 group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </p>
               </div>
             </Link>
           )

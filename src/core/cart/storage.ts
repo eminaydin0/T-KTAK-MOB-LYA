@@ -13,8 +13,21 @@ function normalizeLine(raw: unknown): CartLine | null {
   const imageUrlRaw = r.imageUrl
   const imageUrl =
     typeof imageUrlRaw === 'string' && imageUrlRaw.trim() !== '' ? imageUrlRaw.trim() : undefined
+  const listRaw = r.listPriceUsd
+  const listPriceUsd =
+    typeof listRaw === 'number' && Number.isFinite(listRaw) && listRaw >= 0 ? listRaw : undefined
+  const packageLabel =
+    typeof r.packageLabel === 'string' && r.packageLabel.trim() ? r.packageLabel.trim() : undefined
   if (!Number.isFinite(productId) || !productName) return null
-  return { productId, productName, priceUsd, qty, ...(imageUrl ? { imageUrl } : {}) }
+  return {
+    productId,
+    productName,
+    priceUsd,
+    qty,
+    ...(imageUrl ? { imageUrl } : {}),
+    ...(listPriceUsd != null && listPriceUsd > priceUsd ? { listPriceUsd } : {}),
+    ...(packageLabel ? { packageLabel } : {}),
+  }
 }
 
 export function loadCart(): CartLine[] {
