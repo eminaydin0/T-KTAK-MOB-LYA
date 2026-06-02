@@ -8,6 +8,7 @@ export type HomeCategoryItem = {
   name: string
   count: number
   imageUrl?: string
+  seoDescription?: string
 }
 
 type Props = {

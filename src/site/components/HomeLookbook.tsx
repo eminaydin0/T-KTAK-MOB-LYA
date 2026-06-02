@@ -9,8 +9,29 @@ type Props = {
   title: string
 }
 
-function LookbookCard({ c, index }: { c: HomeCategoryItem; index: number }) {
+const FALLBACK_COPY: Record<string, string> = {
+  mobilya: 'Oturma ve yemek alanları için ölçü, malzeme ve renk seçenekleriyle seçilmiş parçalar.',
+  'ofis-mobilyasi': 'Ergonomik çalışma düzeni — masa, sandalye ve depolama bir arada.',
+  sehpa: 'Salon hiyerarşisini tamamlayan orta ve yan sehpa koleksiyonu.',
+  'yatak-odasi': 'Dinlenme alanına uyumlu baza, komodin ve depolama çözümleri.',
+  depolama: 'Modüler dolap, kitaplık ve gardırop — her metrekare için akıllı alan.',
+  aydinlatma: 'Katmanlı ışık için avize, lambader ve masa aydınlatması.',
+  mutfak: 'Ada, dolap ve oturma — mutfakta işlev ve estetik birlikte.',
+  'bahce-balkon': 'Dış mekân dayanıklı malzemeler, teras ve bahçe için.',
+}
+
+function categoryLead(c: HomeCategoryItem) {
+  const fromSeo = c.seoDescription?.trim()
+  if (fromSeo) {
+    const sentence = fromSeo.split(/[.!]/)[0]?.trim()
+    return sentence ? `${sentence}.` : fromSeo
+  }
+  return FALLBACK_COPY[c.slug] ?? `${c.name} koleksiyonunda özenle seçilmiş parçalar.`
+}
+
+function LookbookCard({ c, index, total }: { c: HomeCategoryItem; index: number; total: number }) {
   const hasImg = Boolean(c.imageUrl?.trim())
+  const lead = categoryLead(c)
 
   return (
     <Link to={categoryPath(c)} className="home-lookbook-card group">
@@ -24,20 +45,40 @@ function LookbookCard({ c, index }: { c: HomeCategoryItem; index: number }) {
             priority={index < 3}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-200 to-stone-300">
-            <span className="text-5xl font-light text-white/80">{c.name.slice(0, 1)}</span>
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-300 to-stone-500">
+            <span className="font-display text-7xl font-light text-white/25 sm:text-8xl">
+              {c.name.slice(0, 1)}
+            </span>
           </div>
         )}
+
         <div className="home-lookbook-shade" aria-hidden />
-        <div className="home-lookbook-meta">
-          <span className="home-lookbook-index">{String(index + 1).padStart(2, '0')}</span>
-          <div className="min-w-0 flex-1">
-            <p className="home-lookbook-name">{c.name}</p>
-            <p className="home-lookbook-sub">{c.count} parça</p>
+
+        <div className="home-lookbook-copy">
+          <div className="home-lookbook-copy-top">
+            <span className="home-lookbook-eyebrow">Koleksiyon</span>
+            <span className="home-lookbook-index">
+              {String(index + 1).padStart(2, '0')}
+              <span className="text-white/35"> / {String(total).padStart(2, '0')}</span>
+            </span>
           </div>
-          <span className="home-lookbook-go" aria-hidden>
-            ↗
-          </span>
+
+          <div className="home-lookbook-copy-main">
+            <p className="home-lookbook-kicker">EMIN · {c.name}</p>
+            <h3 className="home-lookbook-name home-display">{c.name}</h3>
+            <p className="home-lookbook-lead">{lead}</p>
+            <div className="home-lookbook-foot">
+              <span className="home-lookbook-stat">{c.count} parça</span>
+              <span className="home-lookbook-stat-dot" aria-hidden>
+                ·
+              </span>
+              <span className="home-lookbook-stat">Ölçü & malzeme detaylı</span>
+              <span className="home-lookbook-cta">
+                Koleksiyonu incele
+                <span aria-hidden> →</span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </Link>
@@ -143,7 +184,9 @@ export function HomeLookbook({ categories, title }: Props) {
 
   if (categories.length === 0) return null
 
-  const cards = categories.map((c, index) => <LookbookCard key={c.id} c={c} index={index} />)
+  const cards = categories.map((c, index) => (
+    <LookbookCard key={c.id} c={c} index={index} total={categories.length} />
+  ))
 
   return (
     <section id="lookbook" className="home-lookbook site-enter" aria-labelledby="home-lookbook-title">

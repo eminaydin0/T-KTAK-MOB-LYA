@@ -91,6 +91,7 @@ export function HomePage() {
       name: c.name,
       count: counts.get(c.id) ?? 0,
       imageUrl: c.imageUrl,
+      seoDescription: c.seoDescription,
     }))
   }, [categories, products])
 

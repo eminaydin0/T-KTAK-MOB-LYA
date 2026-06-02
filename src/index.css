@@ -299,11 +299,11 @@
   }
 
   .home-cinema-progress {
-    @apply mt-10 text-[11px] tracking-wider text-white/45;
+    @apply mt-10 text-[11px] tracking-wider text-white/40;
   }
 
   .home-cinema-chip {
-    @apply mb-4 inline-flex max-w-xs text-[10px] font-medium uppercase tracking-[0.18em] text-white/75;
+    @apply mb-4 inline-flex max-w-xs text-[10px] font-medium uppercase tracking-[0.18em] text-white/80;
   }
 
   /* Kayan oda bandı */
@@ -415,31 +415,59 @@
   }
 
   .home-lookbook-media {
-    @apply relative h-[min(58vh,520px)] w-full overflow-hidden bg-stone-100 sm:h-[min(62vh,560px)];
+    @apply relative h-[min(62vh,560px)] w-full overflow-hidden bg-stone-100 sm:h-[min(68vh,620px)];
   }
 
   .home-lookbook-shade {
-    @apply absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/10 to-transparent;
+    @apply absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-stone-950/10;
   }
 
-  .home-lookbook-meta {
-    @apply absolute inset-x-0 bottom-0 z-[2] flex items-end gap-3 px-5 pb-5 pt-16 sm:px-8 sm:pb-7;
+  .home-lookbook-copy {
+    @apply absolute inset-0 z-[2] flex flex-col justify-between p-6 sm:p-10 md:p-12;
   }
 
-  .home-lookbook-index {
-    @apply text-xs tabular-nums text-white/55;
+  .home-lookbook-copy-top {
+    @apply flex items-center justify-between gap-4;
+  }
+
+  .home-lookbook-eyebrow {
+    @apply text-[10px] font-medium uppercase tracking-[0.22em] text-white/60;
+  }
+
+  .home-lookbook-copy-main {
+    @apply max-w-2xl;
+  }
+
+  .home-lookbook-kicker {
+    @apply text-[11px] font-medium uppercase tracking-[0.18em] text-white/50;
   }
 
   .home-lookbook-name {
-    @apply text-base font-medium text-white sm:text-lg;
+    @apply mt-2 text-4xl leading-[1.05] text-white sm:text-5xl md:text-6xl;
   }
 
-  .home-lookbook-sub {
-    @apply text-xs text-white/65;
+  .home-lookbook-lead {
+    @apply mt-3 max-w-xl text-sm leading-relaxed text-white/80 sm:mt-4 sm:text-base sm:leading-relaxed;
   }
 
-  .home-lookbook-go {
-    @apply ml-auto text-lg text-white/45 transition duration-soft ease-soft group-hover:text-white/80;
+  .home-lookbook-foot {
+    @apply mt-5 flex flex-col items-start gap-3 sm:mt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-2;
+  }
+
+  .home-lookbook-stat {
+    @apply text-xs text-white/60 sm:text-sm;
+  }
+
+  .home-lookbook-stat-dot {
+    @apply hidden text-white/30 sm:inline;
+  }
+
+  .home-lookbook-cta {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm transition duration-soft ease-soft group-hover:border-white/50 group-hover:bg-white/15 sm:ml-auto sm:text-sm;
+  }
+
+  .home-lookbook-index {
+    @apply text-xs tabular-nums text-white/70 sm:text-sm;
   }
 
   /* Editöryal spot */
