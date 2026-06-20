@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useReducedMotion } from '../../lib/motion'
 import type { CarouselSlide } from '../../core/site/types'
 import {
   CAROUSEL_HERO_SIZES,
@@ -18,6 +19,7 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
   const sorted = [...slides].sort((a, b) => a.order - b.order)
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
+  const reduced = useReducedMotion()
 
   const cinema = variant === 'cinema'
   const immersive = variant === 'immersive' || cinema
@@ -52,13 +54,13 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
   )
 
   useEffect(() => {
-    if (sorted.length <= 1 || paused) return
+    if (sorted.length <= 1 || paused || reduced) return
     const t = window.setInterval(
       () => setI((prev) => ((prev + 1) % sorted.length + sorted.length) % sorted.length),
       CAROUSEL_AUTO_MS
     )
     return () => window.clearInterval(t)
-  }, [sorted.length, paused])
+  }, [sorted.length, paused, reduced])
 
   if (sorted.length === 0) return null
 
@@ -80,11 +82,23 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
     ['--cinema-zoom-duration' as string]: `${CAROUSEL_AUTO_MS}ms`,
   }
 
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      go(i - 1)
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      go(i + 1)
+    }
+  }
+
   return (
     <section
       className={shell}
       aria-roledescription="carousel"
       aria-label="Öne çıkan kampanyalar"
+      tabIndex={0}
+      onKeyDown={onKey}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}

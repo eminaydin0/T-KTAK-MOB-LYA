@@ -231,6 +231,23 @@ export function HomeLookbook({ slides, title, subtitle }: Props) {
     }
   }, [scrollMode, slideWidth, slides.length])
 
+  const scrollByStep = (dir: -1 | 1) => {
+    const vp = viewportRef.current
+    if (!vp) return
+    const step = slideWidth || vp.clientWidth
+    vp.scrollBy({ left: dir * step, behavior: 'smooth' })
+  }
+
+  const onViewportKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      scrollByStep(-1)
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      scrollByStep(1)
+    }
+  }
+
   if (slides.length === 0) return null
 
   const activeSlide = travel > 0 ? Math.min(slides.length, Math.round(progress * (slides.length - 1)) + 1) : 1
@@ -301,9 +318,33 @@ export function HomeLookbook({ slides, title, subtitle }: Props) {
               />
               <p className="home-lookbook-hint">Kaydırarak gezinin</p>
             </Reveal>
-            <div ref={viewportRef} className="home-lookbook-rail-viewport home-lookbook-rail-viewport--scroll" data-lenis-prevent>
+            <div
+              ref={viewportRef}
+              className="home-lookbook-rail-viewport home-lookbook-rail-viewport--scroll"
+              data-lenis-prevent
+              tabIndex={0}
+              onKeyDown={onViewportKey}
+            >
               <div ref={railRef} className="home-lookbook-rail">
                 {cards}
+              </div>
+              <div className="home-lookbook-controls">
+                <button
+                  type="button"
+                  aria-label="Önceki koleksiyon"
+                  className="site-btn-icon home-lookbook-prev"
+                  onClick={() => scrollByStep(-1)}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  aria-label="Sonraki koleksiyon"
+                  className="site-btn-icon home-lookbook-next"
+                  onClick={() => scrollByStep(1)}
+                >
+                  ›
+                </button>
               </div>
             </div>
           </>

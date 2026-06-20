@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { defaultLookbookSlides } from '../../core/site/defaultSiteSeed'
-import { useSearchParams } from 'react-router-dom'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useSite } from '../../core/context/SiteContext'
 import { HomeCategoryFilm } from '../components/HomeCategoryFilm'
@@ -9,7 +8,7 @@ import { HomeCinemaHero } from '../components/HomeCinemaHero'
 import { HomeLookbook } from '../components/HomeLookbook'
 import { HomePackageShowcase } from '../components/HomePackageShowcase'
 import { HomeProductRails } from '../components/HomeProductRails'
-import { SiteCatalogBrowse } from '../components/SiteCatalogBrowse'
+// SiteCatalogBrowse removed from homepage — catalog remains on catalog page only
 import { SiteSeo } from '../seo/SiteSeo'
 import { absoluteUrl, truncateMeta } from '../seo/seoHelpers'
 import { homePath } from '../sitePaths'
@@ -18,24 +17,6 @@ export function HomePage() {
   const { data: site, resolvedContent: content } = useSite()
   const { carousel } = site
   const { categories, products } = useCatalog()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const patchParams = useCallback(
-    (patch: Record<string, string | null>, replace = false) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          for (const [key, value] of Object.entries(patch)) {
-            if (value == null || value === '') next.delete(key)
-            else next.set(key, value)
-          }
-          return next
-        },
-        { replace }
-      )
-    },
-    [setSearchParams]
-  )
 
   const nameOf = useCallback(
     (cid: number) => categories.find((x) => x.id === cid)?.name ?? '',
@@ -81,14 +62,7 @@ export function HomePage() {
 
         <HomeProductRails products={products} categoryNameOf={nameOf} />
 
-        <SiteCatalogBrowse
-          variant="minimal"
-          className="site-section pb-8 pt-2 md:pb-12 md:pt-4"
-          title={content.catalogSectionTitle}
-          lead={content.filterSectionTitle}
-          searchParams={searchParams}
-          patchParams={patchParams}
-        />
+        {/* Catalog preview removed from homepage; full catalog lives on /katalog */}
 
         <HomeLookbook
           slides={defaultLookbookSlides}

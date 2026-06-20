@@ -28,11 +28,11 @@ export function CatalogPagination({ page, totalPages, buildHref, onPageChange }:
     <nav className="catalog-browse-pagination" aria-label="Sayfalama">
       {page > 1 ? (
         onPageChange ? (
-          <button type="button" className="site-btn-ghost px-4 py-2 text-sm" onClick={() => go(page - 1)}>
+          <button type="button" className="site-btn-ghost px-5 py-2.5 text-sm" onClick={() => go(page - 1)}>
             ← Önceki
           </button>
         ) : buildHref ? (
-          <a href={buildHref(page - 1)} className="site-btn-ghost px-4 py-2 text-sm">
+          <a href={buildHref(page - 1)} className="site-btn-ghost px-5 py-2.5 text-sm" rel="prev">
             ← Önceki
           </a>
         ) : null
@@ -68,11 +68,11 @@ export function CatalogPagination({ page, totalPages, buildHref, onPageChange }:
 
       {page < totalPages ? (
         onPageChange ? (
-          <button type="button" className="site-btn-ghost px-4 py-2 text-sm" onClick={() => go(page + 1)}>
+          <button type="button" className="site-btn-ghost px-5 py-2.5 text-sm" onClick={() => go(page + 1)}>
             Sonraki →
           </button>
         ) : buildHref ? (
-          <a href={buildHref(page + 1)} className="site-btn-ghost px-4 py-2 text-sm">
+          <a href={buildHref(page + 1)} className="site-btn-ghost px-5 py-2.5 text-sm" rel="next">
             Sonraki →
           </a>
         ) : null

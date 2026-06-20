@@ -799,6 +799,38 @@
     @apply aspect-auto min-h-[20rem] flex-1 sm:min-h-0;
   }
 
+  /* Accessibility & UX improvements */
+  .site-btn:focus-visible,
+  .site-header-menu-btn:focus-visible,
+  .site-header-action:focus-visible,
+  .home-rails-arrow:focus-visible {
+    @apply outline-none ring-2 ring-cotta/60;
+  }
+
+  /* Scroll snap for horizontal rails */
+  .home-rails-track,
+  .home-category-film-track {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-rails-track > *,
+  .home-category-film-track > * {
+    scroll-snap-align: start;
+  }
+
+  /* Prefer reduced motion: disable heavy animations/transitions in hero */
+  @media (prefers-reduced-motion: reduce) {
+    .home-cinema-slide-img,
+    .home-cinema-copy *,
+    .site-enter,
+    .home-ken-burns,
+    .home-cinema-slide-img--active {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
   .home-set-card-shade {
     @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-950/35 via-transparent to-transparent opacity-0 transition duration-soft ease-soft group-hover:opacity-100;
   }
@@ -1215,6 +1247,14 @@
 
   .home-lookbook-media {
     @apply home-media relative aspect-[4/3] w-full sm:aspect-[16/10];
+  }
+
+  .home-lookbook-controls {
+    @apply pointer-events-none absolute inset-0 z-[6] flex items-center justify-between px-4 py-6;
+  }
+
+  .home-lookbook-controls .site-btn-icon {
+    @apply pointer-events-auto bg-white/90 shadow-soft text-stone-600;
   }
 
   .home-lookbook-rail--scroll .home-lookbook-media {
