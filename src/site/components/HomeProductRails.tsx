@@ -1,10 +1,12 @@
 import { useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { cn } from '../../lib/cn'
 import type { CatalogProduct } from '../../core/catalog/types'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { formatUsdAndTry } from '../../shared/formatPrice'
-import { catalogAnchor } from '../sitePaths'
+import { Reveal, Stagger, StaggerItem } from '../../components/motion'
+import { catalogPath } from '../sitePaths'
 import { HomeRailCard } from './HomeRailCard'
+import { SiteSectionHead } from './SiteSectionHead'
 
 type TabId = 'featured' | 'in_stock' | 'sets'
 
@@ -49,20 +51,16 @@ export function HomeProductRails({ products, categoryNameOf }: Props) {
   }
 
   return (
-    <section id="highlights" className="home-rails site-enter scroll-mt-24" aria-labelledby="home-rails-title">
-      <div className="home-rails-head">
-        <div>
-          <h2 id="home-rails-title" className="home-rails-title">
-            Seçkin parçalar
-          </h2>
-          <p className="home-rails-lead">Kaydırarak keşfedin</p>
-        </div>
-        <Link to={catalogAnchor()} className="home-rails-more">
-          Tümünü gör →
-        </Link>
-      </div>
+    <Reveal as="section" id="highlights" className="site-section scroll-mt-24 py-10 md:py-12" aria-labelledby="home-rails-title">
+      <SiteSectionHead
+        titleId="home-rails-title"
+        title="Seçkin parçalar"
+        lead="Kaydırarak keşfedin"
+        href={catalogPath()}
+        animateTitle
+      />
 
-      <div className="home-rails-tabs" role="tablist" aria-label="Ürün listeleri">
+      <div className="home-soft-tabs mt-8" role="tablist" aria-label="Ürün listeleri" data-lenis-prevent>
         {TABS.map((t) => {
           const count = lists[t.id].length
           if (count === 0) return null
@@ -72,19 +70,20 @@ export function HomeProductRails({ products, categoryNameOf }: Props) {
               type="button"
               role="tab"
               aria-selected={tab === t.id}
-              className={`home-rails-tab ${tab === t.id ? 'home-rails-tab--on' : ''}`}
+              className={cn('home-soft-tab', tab === t.id && 'home-soft-tab--on')}
               onClick={() => setTab(t.id)}
             >
               {t.label}
+              <span className="home-soft-tab-count">{count}</span>
             </button>
           )
         })}
       </div>
 
       {active.length === 0 ? (
-        <p className="home-rails-empty text-sm text-stone-500">Bu listede henüz ürün yok.</p>
+        <p className="mt-6 text-sm text-stone-500">Bu listede henüz ürün yok.</p>
       ) : (
-        <div className="home-rails-wrap">
+        <div className="home-rails-wrap mt-6">
           <button
             type="button"
             className="home-rails-arrow home-rails-arrow--prev"
@@ -93,20 +92,24 @@ export function HomeProductRails({ products, categoryNameOf }: Props) {
           >
             ‹
           </button>
-          <div ref={railRef} className="home-rails-track">
-            {active.map((product, index) => {
-              const price = formatUsdAndTry(product.priceUsd, usdToTry)
-              return (
-                <HomeRailCard
-                  key={product.id}
-                  product={product}
-                  categoryName={categoryNameOf(product.categoryId)}
-                  priceUsd={price.usd}
-                  priceTry={price.tryApprox ?? undefined}
-                  priority={index < 4}
-                />
-              )
-            })}
+          <div ref={railRef} className="home-rails-track" data-lenis-prevent>
+            <Stagger className="flex w-max shrink-0 gap-4 sm:gap-5">
+              {active.map((product, index) => {
+                const price = formatUsdAndTry(product.priceUsd, usdToTry)
+                return (
+                  <StaggerItem key={product.id} className="shrink-0">
+                    <HomeRailCard
+                      product={product}
+                      categoryName={categoryNameOf(product.categoryId)}
+                      priceUsd={price.usd}
+                      priceTry={price.tryApprox ?? undefined}
+                      priority={index < 4}
+                      featured={index === 0}
+                    />
+                  </StaggerItem>
+                )
+              })}
+            </Stagger>
           </div>
           <button
             type="button"
@@ -118,6 +121,6 @@ export function HomeProductRails({ products, categoryNameOf }: Props) {
           </button>
         </div>
       )}
-    </section>
+    </Reveal>
   )
 }

@@ -1,4 +1,5 @@
 import { selectClass } from '../../admin/components/ui/Field'
+import { cn } from '../../lib/cn'
 import {
   PRODUCT_SORT_LABEL,
   STOCK_FILTER_LABEL,
@@ -24,15 +25,13 @@ export function CatalogToolbar({
   className = '',
 }: Props) {
   return (
-    <div
-      className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${className}`}
-    >
+    <div className={cn('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', className)}>
       <p className="site-caption">{total} ürün</p>
       <div className="flex flex-wrap gap-2">
         <label className="flex items-center gap-2 text-xs text-stone-600">
           Sırala
           <select
-            className={`${selectClass} py-2 text-xs`}
+            className={cn(selectClass, 'py-2 text-xs')}
             value={sort}
             onChange={(e) => onSortChange(e.target.value as ProductSort)}
           >
@@ -46,7 +45,7 @@ export function CatalogToolbar({
         <label className="flex items-center gap-2 text-xs text-stone-600">
           Stok
           <select
-            className={`${selectClass} py-2 text-xs`}
+            className={cn(selectClass, 'py-2 text-xs')}
             value={stock}
             onChange={(e) => onStockChange(e.target.value as StockFilter)}
           >

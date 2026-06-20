@@ -4,6 +4,8 @@ import type { CatalogProduct } from '../../core/catalog/types'
 import { STOCK_STATUS_LABEL } from '../../core/catalog/types'
 import { productPrimaryImage } from '../../core/catalog/types'
 import { ImageThumb } from '../../shared/components/ImageThumb'
+import { motion, useReducedMotion } from '../../lib/motion'
+import { cardHover } from '../../lib/motion-variants'
 import { packagePath, productPath } from '../sitePaths'
 
 type Props = {
@@ -15,7 +17,7 @@ type Props = {
   priority?: boolean
 }
 
-/** Mağaza ürün kartı — geliştirilmiş görsel ve hover aksiyonları */
+/** Mağaza ürün kartı — motion hover + sepete ekle */
 export function SiteProductCard({
   product,
   categoryName,
@@ -25,6 +27,7 @@ export function SiteProductCard({
   priority = false,
 }: Props) {
   const { addProduct } = useCart()
+  const reduced = useReducedMotion()
   const stock = STOCK_STATUS_LABEL[product.stockStatus ?? 'unknown']
   const showStock = stock !== 'Belirtilmedi'
   const packageSlug = product.packageSlugs?.[0]
@@ -46,7 +49,7 @@ export function SiteProductCard({
       />
       <span className="shop-card-media-overlay" aria-hidden />
       {packageSlug ? (
-        <span className="shop-card-badge bg-cotta/95 text-white">Paket</span>
+        <span className="shop-card-badge bg-ink/90 text-white">Paket</span>
       ) : showStock ? (
         <span className="shop-card-badge">{stock}</span>
       ) : null}
@@ -65,66 +68,69 @@ export function SiteProductCard({
     </>
   )
 
-  if (!compact) {
-    return (
-      <article className="shop-card">
-        <Link to={productPath(product)} className="shop-card-media">
-          {media}
-        </Link>
-        <div className="shop-card-body">
-          <p className="site-caption truncate uppercase tracking-wide">{categoryName}</p>
-          <Link to={productPath(product)}>
-            <h3 className="shop-card-name mt-0.5">{product.name}</h3>
-          </Link>
-          <p className="site-body mt-1.5 line-clamp-3 flex-1 text-xs leading-relaxed">
-            {product.description.split('\n\n')[0]}
-          </p>
-          <div className="mt-auto flex items-end justify-between gap-2 pt-3">
-            <div>
-              <p className="shop-card-price">{priceUsd}</p>
-              {priceTry ? <p className="site-caption mt-0.5">{priceTry}</p> : null}
-            </div>
-            {packageSlug ? (
-              <Link to={packagePath(packageSlug)} className="site-btn-text text-xs">
-                Seti gör →
-              </Link>
-            ) : null}
-          </div>
+  const bodyCompact = (
+    <>
+      <div className="flex items-center justify-between gap-2">
+        <p className="site-caption truncate">{categoryName}</p>
+        {product.packageSlugs && product.packageSlugs.length > 1 ? (
+          <span className="shrink-0 text-[10px] font-medium text-stone-400">Paket parçası</span>
+        ) : null}
+      </div>
+      <Link to={productPath(product)}>
+        <h3 className="shop-card-name mt-0.5">{product.name}</h3>
+      </Link>
+      <div className="mt-auto flex items-end justify-between gap-2 pt-2">
+        <div>
+          <p className="shop-card-price">{priceUsd}</p>
+          {priceTry ? <p className="site-caption">{priceTry}</p> : null}
         </div>
-      </article>
-    )
-  }
+        <motion.button
+          type="button"
+          className="site-btn-icon h-8 w-8 shrink-0 text-base"
+          aria-label="Sepete ekle"
+          onClick={onAdd}
+          whileTap={reduced ? undefined : { scale: 0.9 }}
+        >
+          +
+        </motion.button>
+      </div>
+    </>
+  )
+
+  const bodyFull = (
+    <>
+      <p className="site-caption truncate uppercase tracking-wide">{categoryName}</p>
+      <Link to={productPath(product)}>
+        <h3 className="shop-card-name mt-0.5">{product.name}</h3>
+      </Link>
+      <div className="site-prose mt-1.5 line-clamp-3 text-xs">
+        <p>{product.description.split('\n\n')[0]}</p>
+      </div>
+      <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+        <div>
+          <p className="shop-card-price">{priceUsd}</p>
+          {priceTry ? <p className="site-caption mt-0.5">{priceTry}</p> : null}
+        </div>
+        {packageSlug ? (
+          <Link to={packagePath(packageSlug)} className="site-btn-text text-xs">
+            Seti gör →
+          </Link>
+        ) : null}
+      </div>
+    </>
+  )
 
   return (
-    <article className="shop-card">
+    <motion.article
+      className="shop-card"
+      variants={reduced ? undefined : cardHover}
+      initial={reduced ? false : 'rest'}
+      whileHover={reduced ? undefined : 'hover'}
+    >
       <Link to={productPath(product)} className="shop-card-media">
         {media}
       </Link>
-      <div className="shop-card-body">
-        <div className="flex items-center justify-between gap-2">
-          <p className="site-caption truncate">{categoryName}</p>
-          {product.packageSlugs && product.packageSlugs.length > 1 ? (
-            <span className="shrink-0 text-[10px] font-medium text-cotta">Paket parçası</span>
-          ) : null}
-        </div>
-        <Link to={productPath(product)}>
-          <h3 className="shop-card-name mt-0.5">{product.name}</h3>
-        </Link>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
-          <div>
-            <p className="shop-card-price">{priceUsd}</p>
-            {priceTry ? <p className="site-caption">{priceTry}</p> : null}
-          </div>
-          <button
-            type="button"
-            className="site-btn-icon h-8 w-8 shrink-0 text-base"
-            aria-label="Sepete ekle"
-            onClick={onAdd}
-          >
-            +
-          </button>
-        </div>
-      </div>
-    </article>
+      <div className="shop-card-body">{compact ? bodyCompact : bodyFull}</div>
+    </motion.article>
   )
 }

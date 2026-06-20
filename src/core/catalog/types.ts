@@ -48,7 +48,13 @@ export type CatalogProduct = {
 }
 
 /** Tam set veya parca parca satilan oda / dugun paketi */
-export type CatalogPackageKind = 'wedding' | 'living_room' | 'bedroom'
+export type CatalogPackageKind =
+  | 'wedding'
+  | 'living_room'
+  | 'bedroom'
+  | 'kitchen'
+  | 'outdoor'
+  | 'office'
 
 export type CatalogPackage = {
   id: number
@@ -65,10 +71,22 @@ export type CatalogPackage = {
 }
 
 export const PACKAGE_KIND_LABEL: Record<CatalogPackageKind, string> = {
-  wedding: 'Düğün',
-  living_room: 'Oturma odası',
-  bedroom: 'Yatak odası',
+  wedding: 'Düğün seti',
+  living_room: 'Oturma odası grubu',
+  bedroom: 'Yatak odası seti',
+  kitchen: 'Mutfak seti',
+  outdoor: 'Bahçe & balkon',
+  office: 'Ofis seti',
 }
+
+export const PACKAGE_KIND_ORDER: CatalogPackageKind[] = [
+  'wedding',
+  'living_room',
+  'bedroom',
+  'kitchen',
+  'outdoor',
+  'office',
+]
 
 export function productImageList(p: CatalogProduct): string[] {
   return Array.isArray(p.images) ? p.images.filter((u) => u.trim() !== '') : []

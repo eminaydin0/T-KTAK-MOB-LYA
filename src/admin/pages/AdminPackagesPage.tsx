@@ -4,7 +4,7 @@ import {
   packageBundlePriceUsd,
   packagePartsTotalUsd,
 } from '../../core/catalog/defaultPackageSeed'
-import { PACKAGE_KIND_LABEL, productPrimaryImage, type CatalogPackage, type CatalogPackageKind } from '../../core/catalog/types'
+import { PACKAGE_KIND_LABEL, PACKAGE_KIND_ORDER, productPrimaryImage, type CatalogPackage, type CatalogPackageKind } from '../../core/catalog/types'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
 import { ImageThumb } from '../../shared/components/ImageThumb'
@@ -14,11 +14,10 @@ import { Button } from '../components/ui/Button'
 import { Field, inputClass, selectClass, textareaClass } from '../components/ui/Field'
 import { Modal } from '../components/ui/Modal'
 
-const KIND_OPTIONS: { value: CatalogPackageKind; label: string }[] = [
-  { value: 'wedding', label: PACKAGE_KIND_LABEL.wedding },
-  { value: 'living_room', label: PACKAGE_KIND_LABEL.living_room },
-  { value: 'bedroom', label: PACKAGE_KIND_LABEL.bedroom },
-]
+const KIND_OPTIONS: { value: CatalogPackageKind; label: string }[] = PACKAGE_KIND_ORDER.map((value) => ({
+  value,
+  label: PACKAGE_KIND_LABEL[value],
+}))
 
 type FormState = {
   name: string

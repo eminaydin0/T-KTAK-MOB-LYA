@@ -1,3 +1,5 @@
+import typography from '@tailwindcss/typography'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -59,6 +61,10 @@ export default {
           '0%': { transform: 'scale(1)' },
           '100%': { transform: 'scale(1.015)' },
         },
+        'home-cinema-zoom': {
+          '0%': { transform: 'scale(1.05)' },
+          '100%': { transform: 'scale(1.12)' },
+        },
         'home-scroll-pulse': {
           '0%, 100%': { opacity: '0.35' },
           '50%': { opacity: '0.7' },
@@ -77,11 +83,12 @@ export default {
         'site-fade-in': 'site-fade-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) both',
         'site-spin': 'site-spin 0.9s linear infinite',
         'home-ken-burns': 'home-ken-burns 18s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+        'home-cinema-zoom': 'home-cinema-zoom var(--cinema-zoom-duration, 7s) cubic-bezier(0.22, 1, 0.36, 1) forwards',
         'home-scroll-pulse': 'home-scroll-pulse 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite',
         'home-marquee': 'home-marquee 60s linear infinite',
         'home-marquee-reverse': 'home-marquee-reverse 75s linear infinite',
       },
     },
   },
-  plugins: [],
+  plugins: [typography],
 }

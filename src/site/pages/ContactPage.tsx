@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Reveal } from '../../components/motion'
 import { saveLead } from '../../core/leads/storage'
 import type { ContactLead } from '../../core/leads/types'
 import { useSite } from '../../core/context/SiteContext'
@@ -88,7 +89,7 @@ export function ContactPage() {
     <>
       <SiteSeo title={`İletişim | ${name}`} description={seoDescription} path="/iletisim" />
 
-      <div className="site-enter mx-auto max-w-2xl">
+      <Reveal className="mx-auto max-w-2xl">
         <nav className="site-breadcrumb mb-8">
           <Link to={homePath()} className="site-link">
             Ana sayfa
@@ -261,7 +262,7 @@ export function ContactPage() {
             <SocialLinks instagram={s.socialInstagram} whatsapp={s.socialWhatsApp} className="mt-3" />
           </div>
         </section>
-      </div>
+      </Reveal>
     </>
   )
 }

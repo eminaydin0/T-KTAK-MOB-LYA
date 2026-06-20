@@ -27,12 +27,20 @@ export function packagePath(slug: string) {
   return `/paket/${slug}`
 }
 
+export function packagesPath() {
+  return '/setler'
+}
+
 export function packagesAnchor() {
-  return '/#packages'
+  return packagesPath()
+}
+
+export function catalogPath() {
+  return '/katalog'
 }
 
 export function catalogAnchor() {
-  return '/#catalog'
+  return catalogPath()
 }
 
 export function denePath() {

@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { CarouselSlide } from '../../core/site/types'
+import {
+  CAROUSEL_HERO_SIZES,
+  carouselHeroSrc,
+  carouselHeroSrcSet,
+} from '../../lib/carouselImage'
 
 type Props = {
   slides: CarouselSlide[]
@@ -7,7 +12,7 @@ type Props = {
   onSlideChange?: (index: number) => void
 }
 
-const AUTO_MS = 7000
+export const CAROUSEL_AUTO_MS = 7000
 
 export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props) {
   const sorted = [...slides].sort((a, b) => a.order - b.order)
@@ -27,10 +32,14 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
 
   useEffect(() => {
     for (const s of sorted) {
-      const url = s.imageUrl?.trim()
+      const url = carouselHeroSrc(s.imageUrl ?? '')
       if (!url) continue
       const img = new Image()
       img.decoding = 'async'
+      if (carouselHeroSrcSet(s.imageUrl ?? '')) {
+        img.srcset = carouselHeroSrcSet(s.imageUrl ?? '')!
+        img.sizes = CAROUSEL_HERO_SIZES
+      }
       img.src = url
     }
   }, [sorted])
@@ -44,9 +53,12 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
 
   useEffect(() => {
     if (sorted.length <= 1 || paused) return
-    const t = window.setInterval(() => go(i + 1), AUTO_MS)
+    const t = window.setInterval(
+      () => setI((prev) => ((prev + 1) % sorted.length + sorted.length) % sorted.length),
+      CAROUSEL_AUTO_MS
+    )
     return () => window.clearInterval(t)
-  }, [sorted.length, paused, i, go])
+  }, [sorted.length, paused])
 
   if (sorted.length === 0) return null
 
@@ -64,6 +76,10 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
       ? 'relative aspect-[4/5] max-h-[min(68vh,640px)] min-h-[280px] w-full sm:aspect-[16/10] lg:aspect-[2.2/1] lg:max-h-[min(52vh,560px)]'
       : 'relative min-h-[200px] w-full sm:min-h-[220px] lg:aspect-[2.25/1] lg:max-h-[300px]'
 
+  const cinemaZoomStyle = {
+    ['--cinema-zoom-duration' as string]: `${CAROUSEL_AUTO_MS}ms`,
+  }
+
   return (
     <section
       className={shell}
@@ -74,22 +90,55 @@ export function HomeCarousel({ slides, variant = 'card', onSlideChange }: Props)
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className={frameClass}>
-        {sorted.map((s, idx) => (
-          <img
-            key={s.id}
-            src={s.imageUrl || 'https://via.placeholder.com/1200x500?text=Gorsel'}
-            alt={s.title || 'Slayt görseli'}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-soft ease-soft motion-reduce:transition-none ${
-              idx === i
-                ? `z-[1] opacity-100 ${cinema || immersive ? 'motion-safe:animate-home-ken-burns motion-reduce:animate-none' : ''}`
-                : 'z-0 scale-100 opacity-0'
-            }`}
-            loading={idx <= 1 ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={idx === i ? 'high' : 'low'}
-          />
-        ))}
+      <div className={frameClass} style={cinema ? cinemaZoomStyle : undefined}>
+        {cinema ? (
+          sorted.map((s, idx) => {
+            const active = idx === i
+            const src = carouselHeroSrc(s.imageUrl ?? '')
+            const srcSet = carouselHeroSrcSet(s.imageUrl ?? '')
+            return (
+              <div
+                key={s.id}
+                className={`home-cinema-slide ${active ? 'z-[1] opacity-100' : 'z-0 opacity-0'}`}
+                aria-hidden={!active}
+              >
+                <img
+                  key={active ? `zoom-${i}` : `idle-${s.id}`}
+                  src={src || 'https://via.placeholder.com/1200x500?text=Gorsel'}
+                  srcSet={srcSet}
+                  sizes={srcSet ? CAROUSEL_HERO_SIZES : undefined}
+                  alt={active ? s.title || 'Slayt görseli' : ''}
+                  className={`home-cinema-slide-img ${active ? 'home-cinema-slide-img--active' : ''}`}
+                  loading={idx <= 1 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={active ? 'high' : 'low'}
+                />
+              </div>
+            )
+          })
+        ) : (
+          sorted.map((s, idx) => {
+            const src = carouselHeroSrc(s.imageUrl ?? '')
+            const srcSet = carouselHeroSrcSet(s.imageUrl ?? '')
+            return (
+            <img
+              key={s.id}
+              src={src || 'https://via.placeholder.com/1200x500?text=Gorsel'}
+              srcSet={srcSet}
+              sizes={srcSet ? CAROUSEL_HERO_SIZES : undefined}
+              alt={s.title || 'Slayt görseli'}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-soft ease-soft motion-reduce:transition-none ${
+                idx === i
+                  ? `z-[1] opacity-100 ${immersive ? 'motion-safe:animate-home-ken-burns motion-reduce:animate-none' : ''}`
+                  : 'z-0 scale-100 opacity-0'
+              }`}
+              loading={idx <= 1 ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={idx === i ? 'high' : 'low'}
+            />
+            )
+          })
+        )}
 
         {!cinema ? (
           <div

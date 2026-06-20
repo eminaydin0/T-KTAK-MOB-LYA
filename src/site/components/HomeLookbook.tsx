@@ -1,62 +1,90 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useLenis } from 'lenis/react'
+import { Reveal } from '../../components/motion'
+import { BlurText } from '../../components/react-bits'
+import { carouselHeroSrc } from '../../lib/carouselImage'
 import { ImageThumb } from '../../shared/components/ImageThumb'
-import { categoryPath } from '../sitePaths'
-import type { HomeCategoryItem } from './HomeCategoryBento'
+import type { CarouselSlide } from '../../core/site/types'
 
 type Props = {
-  categories: HomeCategoryItem[]
+  slides: CarouselSlide[]
   title: string
+  subtitle?: string
 }
 
-const FALLBACK_COPY: Record<string, string> = {
-  mobilya: 'Oturma ve yemek alanları için ölçü, malzeme ve renk seçenekleriyle seçilmiş parçalar.',
-  'ofis-mobilyasi': 'Ergonomik çalışma düzeni — masa, sandalye ve depolama bir arada.',
-  sehpa: 'Salon hiyerarşisini tamamlayan orta ve yan sehpa koleksiyonu.',
-  'yatak-odasi': 'Dinlenme alanına uyumlu baza, komodin ve depolama çözümleri.',
-  depolama: 'Modüler dolap, kitaplık ve gardırop — her metrekare için akıllı alan.',
-  aydinlatma: 'Katmanlı ışık için avize, lambader ve masa aydınlatması.',
-  mutfak: 'Ada, dolap ve oturma — mutfakta işlev ve estetik birlikte.',
-  'bahce-balkon': 'Dış mekân dayanıklı malzemeler, teras ve bahçe için.',
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value))
 }
 
-function categoryLead(c: HomeCategoryItem) {
-  const fromSeo = c.seoDescription?.trim()
-  if (fromSeo) {
-    const sentence = fromSeo.split(/[.!]/)[0]?.trim()
-    return sentence ? `${sentence}.` : fromSeo
+function slideMotion(index: number, offset: number, slideWidth: number) {
+  if (slideWidth <= 0) {
+    return { focus: index === 0 ? 1 : 0, imageScale: 1, imageX: 0 }
   }
-  return FALLBACK_COPY[c.slug] ?? `${c.name} koleksiyonunda özenle seçilmiş parçalar.`
+
+  const center = index * slideWidth
+  const distance = Math.abs(offset - center) / slideWidth
+  const focus = clamp01(1 - distance)
+  const imageScale = 1.04 + (1 - focus) * 0.05
+  const imageX = (offset - center) * 0.08
+
+  return { focus, imageScale, imageX }
 }
 
-function LookbookCard({ c, index, total }: { c: HomeCategoryItem; index: number; total: number }) {
-  const hasImg = Boolean(c.imageUrl?.trim())
-  const lead = categoryLead(c)
+function LookbookCard({
+  slide,
+  index,
+  total,
+  offset,
+  slideWidth,
+}: {
+  slide: CarouselSlide
+  index: number
+  total: number
+  offset: number
+  slideWidth: number
+}) {
+  const hasImg = Boolean(slide.imageUrl?.trim())
+  const href = slide.linkUrl?.trim() || '/katalog'
+  const { focus, imageScale, imageX } = slideMotion(index, offset, slideWidth)
 
   return (
-    <Link to={categoryPath(c)} className="home-lookbook-card group">
+    <Link to={href} className="home-lookbook-card group">
       <div className="home-lookbook-media">
-        {hasImg ? (
-          <ImageThumb
-            src={c.imageUrl!}
-            alt=""
-            className="site-img-zoom h-full w-full object-cover"
-            emptyClassName="flex h-full w-full items-center justify-center bg-stone-200"
-            priority={index < 3}
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-300 to-stone-500">
-            <span className="font-display text-7xl font-light text-white/25 sm:text-8xl">
-              {c.name.slice(0, 1)}
-            </span>
-          </div>
-        )}
+        <div
+          className="home-lookbook-media-inner"
+          style={{
+            transform: `translate3d(${imageX}px, 0, 0) scale(${imageScale})`,
+          }}
+        >
+          {hasImg ? (
+            <ImageThumb
+              src={carouselHeroSrc(slide.imageUrl)}
+              alt=""
+              className="site-img-zoom h-full w-full object-cover"
+              emptyClassName="flex h-full w-full items-center justify-center bg-stone-200"
+              priority={index < 2}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-300 to-stone-500">
+              <span className="font-display text-7xl font-light text-white/25 sm:text-8xl">
+                {slide.title.slice(0, 1)}
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className="home-lookbook-shade" aria-hidden />
 
-        <div className="home-lookbook-copy">
+        <div
+          className="home-lookbook-copy"
+          style={{
+            opacity: 0.28 + focus * 0.72,
+            transform: `translate3d(0, ${(1 - focus) * 18}px, 0)`,
+          }}
+        >
           <div className="home-lookbook-copy-top">
-            <span className="home-lookbook-eyebrow">Koleksiyon</span>
+            <span className="home-lookbook-eyebrow">EMIN</span>
             <span className="home-lookbook-index">
               {String(index + 1).padStart(2, '0')}
               <span className="text-white/35"> / {String(total).padStart(2, '0')}</span>
@@ -64,17 +92,17 @@ function LookbookCard({ c, index, total }: { c: HomeCategoryItem; index: number;
           </div>
 
           <div className="home-lookbook-copy-main">
-            <p className="home-lookbook-kicker">EMIN · {c.name}</p>
-            <h3 className="home-lookbook-name home-display">{c.name}</h3>
-            <p className="home-lookbook-lead">{lead}</p>
+            <p className="home-lookbook-kicker">EMIN Mobilya</p>
+            <h3 className="home-lookbook-name home-display">{slide.title}</h3>
+            <p className="home-lookbook-lead">{slide.subtitle}</p>
             <div className="home-lookbook-foot">
-              <span className="home-lookbook-stat">{c.count} parça</span>
+              <span className="home-lookbook-stat">Showroom & keşif</span>
               <span className="home-lookbook-stat-dot" aria-hidden>
                 ·
               </span>
-              <span className="home-lookbook-stat">Ölçü & malzeme detaylı</span>
+              <span className="home-lookbook-stat">Ölçüye özel üretim</span>
               <span className="home-lookbook-cta">
-                Koleksiyonu incele
+                Devam et
                 <span aria-hidden> →</span>
               </span>
             </div>
@@ -85,126 +113,163 @@ function LookbookCard({ c, index, total }: { c: HomeCategoryItem; index: number;
   )
 }
 
-export function HomeLookbook({ categories, title }: Props) {
+export function HomeLookbook({ slides, title, subtitle }: Props) {
   const pinRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
-  const targetOffsetRef = useRef(0)
-  const targetProgressRef = useRef(0)
-  const currentOffsetRef = useRef(0)
-  const currentProgressRef = useRef(0)
-  const rafRef = useRef(0)
+  const travelRef = useRef(0)
+  const scrollModeRef = useRef(true)
   const [travel, setTravel] = useState(0)
   const [offset, setOffset] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [slideWidth, setSlideWidth] = useState(0)
   const [pinHeight, setPinHeight] = useState<number | null>(null)
   const [scrollMode, setScrollMode] = useState(true)
+
+  const syncFromScroll = useCallback(() => {
+    const pin = pinRef.current
+    if (!pin || !scrollModeRef.current || travelRef.current <= 0) return
+
+    const rect = pin.getBoundingClientRect()
+    const range = pin.offsetHeight - window.innerHeight
+    if (range <= 0) return
+
+    const p = clamp01(-rect.top / range)
+    const nextOffset = p * travelRef.current
+
+    setProgress(p)
+    setOffset(nextOffset)
+  }, [])
 
   const measure = useCallback(() => {
     const rail = railRef.current
     const viewport = viewportRef.current
     if (!rail || !viewport) return
-    const slideW = viewport.clientWidth
-    viewport.style.setProperty('--lookbook-slide', `${slideW}px`)
-    const max = Math.max(0, categories.length * slideW - slideW)
-    setTravel(max)
-    setPinHeight(max > 48 ? max + window.innerHeight : null)
-    setScrollMode(max > 48)
-  }, [categories.length])
+
+    const vw = viewport.clientWidth
+    const isSm = window.matchMedia('(min-width: 640px)').matches
+    const sidePad = isSm ? 64 : 40
+    const gap = isSm ? 20 : 16
+    const maxCard = 672
+
+    const fullSlide = vw
+    const peekCard = Math.min(vw - sidePad, maxCard)
+
+    const maxAtFull = Math.max(0, slides.length * fullSlide - fullSlide)
+    const nextScrollMode = maxAtFull > 48 && slides.length >= 5
+
+    const cardWidth = nextScrollMode ? fullSlide : peekCard
+    const step = nextScrollMode ? fullSlide : peekCard + gap
+
+    viewport.style.setProperty('--lookbook-slide', `${cardWidth}px`)
+
+    travelRef.current = nextScrollMode ? maxAtFull : 0
+    scrollModeRef.current = nextScrollMode
+
+    setSlideWidth(step)
+    setTravel(nextScrollMode ? maxAtFull : 0)
+    setPinHeight(nextScrollMode ? maxAtFull + window.innerHeight : null)
+    setScrollMode(nextScrollMode)
+    syncFromScroll()
+  }, [slides.length, syncFromScroll])
 
   useLayoutEffect(() => {
     measure()
+
     const rail = railRef.current
     if (!rail) return
+
     const ro = new ResizeObserver(measure)
     ro.observe(rail)
     if (viewportRef.current) ro.observe(viewportRef.current)
     window.addEventListener('resize', measure)
+
     return () => {
       ro.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [categories, measure])
+  }, [slides, measure])
 
-  useEffect(() => {
-    const pin = pinRef.current
-    if (!pin || !scrollMode || travel <= 0) return
-
+  useLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) {
+      scrollModeRef.current = false
       setScrollMode(false)
       return
     }
 
-    const tick = () => {
-      const factor = 0.1
-      const nextOffset =
-        currentOffsetRef.current +
-        (targetOffsetRef.current - currentOffsetRef.current) * factor
-      const nextProgress =
-        currentProgressRef.current +
-        (targetProgressRef.current - currentProgressRef.current) * factor
+    syncFromScroll()
+    window.addEventListener('scroll', syncFromScroll, { passive: true })
 
-      const offsetDone = Math.abs(nextOffset - targetOffsetRef.current) < 0.4
-      const progressDone = Math.abs(nextProgress - targetProgressRef.current) < 0.002
-
-      currentOffsetRef.current = offsetDone ? targetOffsetRef.current : nextOffset
-      currentProgressRef.current = progressDone ? targetProgressRef.current : nextProgress
-
-      setOffset(currentOffsetRef.current)
-      setProgress(currentProgressRef.current)
-
-      if (!offsetDone || !progressDone) {
-        rafRef.current = requestAnimationFrame(tick)
-      } else {
-        rafRef.current = 0
-      }
-    }
-
-    const onScroll = () => {
-      const rect = pin.getBoundingClientRect()
-      const range = pin.offsetHeight - window.innerHeight
-      if (range <= 0) return
-      const p = Math.min(1, Math.max(0, -rect.top / range))
-      targetProgressRef.current = p
-      targetOffsetRef.current = p * travel
-      if (!rafRef.current) {
-        rafRef.current = requestAnimationFrame(tick)
-      }
-    }
-
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
     return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      rafRef.current = 0
+      window.removeEventListener('scroll', syncFromScroll)
     }
-  }, [travel, scrollMode])
+  }, [syncFromScroll, scrollMode, travel])
 
-  if (categories.length === 0) return null
+  useLenis(() => {
+    syncFromScroll()
+  })
 
-  const cards = categories.map((c, index) => (
-    <LookbookCard key={c.id} c={c} index={index} total={categories.length} />
+  useLayoutEffect(() => {
+    if (scrollMode) return
+
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    const onHorizontalScroll = () => {
+      setOffset(viewport.scrollLeft)
+      if (slideWidth > 0 && slides.length > 1) {
+        setProgress(clamp01(viewport.scrollLeft / (slideWidth * (slides.length - 1))))
+      }
+    }
+
+    onHorizontalScroll()
+    viewport.addEventListener('scroll', onHorizontalScroll, { passive: true })
+
+    return () => {
+      viewport.removeEventListener('scroll', onHorizontalScroll)
+    }
+  }, [scrollMode, slideWidth, slides.length])
+
+  if (slides.length === 0) return null
+
+  const activeSlide = travel > 0 ? Math.min(slides.length, Math.round(progress * (slides.length - 1)) + 1) : 1
+
+  const cards = slides.map((slide, index) => (
+    <LookbookCard
+      key={slide.id}
+      slide={slide}
+      index={index}
+      total={slides.length}
+      offset={offset}
+      slideWidth={slideWidth}
+    />
   ))
 
+  const hint = subtitle?.trim() || 'Aşağı kaydırın — markamızı keşfedin'
+
   return (
-    <section id="lookbook" className="home-lookbook site-enter" aria-labelledby="home-lookbook-title">
+    <section id="lookbook" className="home-lookbook" aria-labelledby="home-lookbook-title">
       <div className="home-lookbook-shell">
         {scrollMode && pinHeight ? (
           <div ref={pinRef} className="home-lookbook-pin" style={{ height: pinHeight }}>
             <div className="home-lookbook-sticky">
               <div className="home-lookbook-head home-lookbook-head--pinned">
                 <div>
-                  <h2 id="home-lookbook-title" className="home-lookbook-title">
-                    {title}
-                  </h2>
-                  <p className="home-lookbook-hint">Aşağı kaydırın — koleksiyonlar yana açılır</p>
+                  <BlurText
+                    as="h2"
+                    id="home-lookbook-title"
+                    text={title}
+                    className="home-lookbook-title"
+                    delay={80}
+                    immediate
+                  />
+                  <p className="home-lookbook-hint">{hint}</p>
                 </div>
                 <span className="home-lookbook-counter tabular-nums" aria-live="polite">
-                  {String(Math.min(categories.length, Math.floor(progress * categories.length) + 1)).padStart(2, '0')}
+                  {String(activeSlide).padStart(2, '0')}
                   <span className="text-stone-300"> / </span>
-                  {String(categories.length).padStart(2, '0')}
+                  {String(slides.length).padStart(2, '0')}
                 </span>
               </div>
 
@@ -225,13 +290,18 @@ export function HomeLookbook({ categories, title }: Props) {
           </div>
         ) : (
           <>
-            <div className="home-lookbook-head">
-              <h2 id="home-lookbook-title" className="home-lookbook-title">
-                {title}
-              </h2>
+            <Reveal className="home-lookbook-head">
+              <BlurText
+                as="h2"
+                id="home-lookbook-title"
+                text={title}
+                className="home-lookbook-title"
+                delay={80}
+                rootMargin="-8% 0px"
+              />
               <p className="home-lookbook-hint">Kaydırarak gezinin</p>
-            </div>
-            <div ref={viewportRef} className="home-lookbook-rail-viewport home-lookbook-rail-viewport--scroll">
+            </Reveal>
+            <div ref={viewportRef} className="home-lookbook-rail-viewport home-lookbook-rail-viewport--scroll" data-lenis-prevent>
               <div ref={railRef} className="home-lookbook-rail">
                 {cards}
               </div>

@@ -1,27 +1,30 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { Reveal, Stagger, StaggerItem } from '../../components/motion'
+import { cn } from '../../lib/cn'
+import { packageBundlePriceUsd } from '../../core/catalog/defaultPackageSeed'
+import { PACKAGE_KIND_LABEL } from '../../core/catalog/types'
 import { useCatalog } from '../../core/context/CatalogContext'
 import { useExchangeRate } from '../../lib/useExchangeRate'
-import { formatUsdAndTry } from '../../shared/formatPrice'
-import { packageBundlePriceUsd } from '../../core/catalog/defaultPackageSeed'
-import { packagePath } from '../sitePaths'
 import { ImageThumb } from '../../shared/components/ImageThumb'
+import { formatUsdAndTry } from '../../shared/formatPrice'
+import { packagePath, packagesPath } from '../sitePaths'
+import { SiteSectionHead } from './SiteSectionHead'
+
+const HOME_SET_LIMIT = 3
 
 export function HomePackageShowcase() {
   const { packages, products } = useCatalog()
   const usdToTry = useExchangeRate()
 
   const rows = useMemo(() => {
-    return packages.map((pkg) => {
-      const parts = pkg.productIds
-        .map((id) => products.find((p) => p.id === id))
-        .filter((p): p is NonNullable<typeof p> => p != null)
+    return packages.slice(0, HOME_SET_LIMIT).map((pkg) => {
+      const partsCount = pkg.productIds.filter((id) => products.some((p) => p.id === id)).length
       const bundle = packageBundlePriceUsd(pkg.productIds, products, pkg.bundleDiscountPercent)
       return {
         pkg,
-        partsCount: parts.length,
+        partsCount,
         bundleFmt: formatUsdAndTry(bundle, usdToTry),
-        savings: pkg.bundleDiscountPercent,
       }
     })
   }, [packages, products, usdToTry])
@@ -29,60 +32,73 @@ export function HomePackageShowcase() {
   if (rows.length === 0) return null
 
   return (
-    <section id="packages" className="home-packages home-breakout site-enter scroll-mt-24" aria-labelledby="home-packages-title">
-      <div className="home-packages-inner">
-        <header className="home-packages-head">
-          <h2 id="home-packages-title" className="home-packages-title">
-            Setlerde indirim,
-            <br />
-            parçada özgürlük
-          </h2>
-          <p className="home-packages-lead">
-            Tam paketi tek tıkla sepete ekleyin — indirim otomatik uygulanır. İstediğiniz parçayı ayrıca da alabilirsiniz.
-          </p>
-        </header>
+    <Reveal
+      as="section"
+      id="packages"
+      className="site-section scroll-mt-24 py-10 md:py-14"
+      aria-labelledby="home-packages-title"
+    >
+      <SiteSectionHead
+        titleId="home-packages-title"
+        kicker="Tam set"
+        title="Set koleksiyonları"
+        lead="Tam sette indirim; parçaları ayrı ayrı da seçebilirsiniz."
+        href={packagesPath()}
+        linkLabel="Tüm setler →"
+        animateTitle
+        shinyKicker
+      />
 
-        <ul className="home-packages-list">
-          {rows.map((row, index) => (
-            <li key={row.pkg.id}>
-              <Link to={packagePath(row.pkg.slug)} className="home-package-row group">
-                <span className="home-package-num">{String(index + 1).padStart(2, '0')}</span>
-                <div className="home-package-thumb">
-                  {row.pkg.imageUrl?.trim() ? (
-                    <ImageThumb
-                      src={row.pkg.imageUrl}
-                      alt=""
-                      className="site-img-zoom h-full w-full object-cover"
-                      emptyClassName="flex h-full w-full items-center justify-center bg-stone-700"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-stone-700 text-stone-500">
-                      Set
-                    </div>
-                  )}
-                </div>
-                <div className="home-package-body">
-                  <p className="home-package-name">{row.pkg.name}</p>
-                  <p className="home-package-tag">{row.pkg.tagline}</p>
-                  <p className="home-package-meta">
-                    {row.partsCount} parça
-                    {row.savings > 0 ? ` · %${row.savings} set indirimi` : ''}
-                  </p>
-                </div>
-                <div className="home-package-price">
-                  <p className="text-lg font-light tabular-nums text-white">{row.bundleFmt.usd}</p>
-                  {row.bundleFmt.tryApprox ? (
-                    <p className="text-xs text-stone-400">{row.bundleFmt.tryApprox}</p>
+      <Stagger as="ul" className="home-set-bento mt-10">
+        {rows.map((row, index) => (
+          <StaggerItem
+            as="li"
+            key={row.pkg.id}
+            className={cn(index === 0 && rows.length >= 3 && 'home-set-bento-feature')}
+          >
+            <Link to={packagePath(row.pkg.slug)} className="home-set-card group">
+              <div className="home-set-card-media">
+                {row.pkg.imageUrl?.trim() ? (
+                  <ImageThumb
+                    src={row.pkg.imageUrl}
+                    alt=""
+                    className="site-img-zoom h-full w-full object-cover"
+                    emptyClassName="flex h-full w-full items-center justify-center bg-stone-100"
+                    priority={index === 0}
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-stone-100 font-display text-4xl text-stone-300">
+                    {row.pkg.name.slice(0, 1)}
+                  </div>
+                )}
+                <span className="home-set-card-shade" aria-hidden />
+                <span className="home-set-card-overlay">
+                  <span className="site-set-card-badge">{PACKAGE_KIND_LABEL[row.pkg.kind]}</span>
+                  {row.pkg.bundleDiscountPercent > 0 ? (
+                    <span className="site-set-card-discount">%{row.pkg.bundleDiscountPercent}</span>
                   ) : null}
-                  <span className="home-package-arrow" aria-hidden>
-                    ↗
+                </span>
+              </div>
+              <div className="home-set-card-body">
+                <h3 className="home-set-card-name">{row.pkg.name}</h3>
+                <p className="home-set-card-tag">{row.pkg.tagline}</p>
+                <div className="home-set-card-foot">
+                  <div>
+                    <p className="home-set-card-price">{row.bundleFmt.usd}</p>
+                    {row.bundleFmt.tryApprox ? (
+                      <p className="home-set-card-try">{row.bundleFmt.tryApprox}</p>
+                    ) : null}
+                  </div>
+                  <span className="home-set-card-meta">
+                    {row.partsCount} parça
+                    <span aria-hidden> →</span>
                   </span>
                 </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+              </div>
+            </Link>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </Reveal>
   )
 }

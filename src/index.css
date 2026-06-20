@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -47,6 +45,11 @@
     @apply text-xs text-stone-400;
   }
 
+  /** @tailwindcss/typography — ürün / içerik metinleri */
+  .site-prose {
+    @apply prose prose-stone max-w-none prose-p:leading-relaxed prose-p:text-stone-700 prose-headings:font-display prose-headings:font-normal prose-headings:text-ink prose-a:text-ink prose-a:no-underline hover:prose-a:text-cotta prose-strong:text-ink;
+  }
+
   .site-link {
     @apply text-ink transition duration-site ease-site hover:text-cotta;
   }
@@ -64,11 +67,441 @@
   }
 
   .site-topbar {
-    @apply border-b border-line/50 bg-surface-soft py-2.5 text-center text-[11px] tracking-wide text-stone-400;
+    @apply border-b border-line/40 bg-surface-soft/90;
+  }
+
+  .site-topbar-inner {
+    @apply mx-auto flex max-w-site items-center justify-between gap-4 px-5 py-2 text-[11px] tracking-wide text-stone-400 sm:px-8;
+  }
+
+  .site-topbar-phone {
+    @apply shrink-0 transition hover:text-stone-600;
+  }
+
+  .site-topbar-tag {
+    @apply min-w-0 flex-1 truncate text-center text-stone-400/90;
+  }
+
+  .site-topbar-cta {
+    @apply shrink-0 text-stone-500 transition hover:text-ink;
+  }
+
+  /* —— Header —— */
+  .site-header {
+    @apply sticky top-0 z-50;
+  }
+
+  .site-header--elevated .site-header-bar {
+    @apply border-line/80 shadow-soft;
+  }
+
+  .site-header-bar {
+    @apply relative border-b border-line/50 bg-white/90 backdrop-blur-lg transition duration-soft ease-soft;
+  }
+
+  .site-header-inner {
+    @apply mx-auto flex max-w-site items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:py-3.5;
+  }
+
+  .site-header-start {
+    @apply flex min-w-0 items-center gap-3 lg:justify-self-start;
+  }
+
+  .site-header-nav {
+    @apply items-center gap-1 lg:justify-self-center;
+  }
+
+  .site-header-nav-trigger {
+    @apply inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-stone-600 transition duration-site ease-site hover:bg-surface-muted hover:text-ink;
+  }
+
+  .site-header-nav-trigger--active {
+    @apply bg-surface-muted text-ink;
+  }
+
+  .site-header-nav-link {
+    @apply rounded-full px-4 py-2 text-sm font-medium text-stone-600 transition duration-site ease-site hover:bg-surface-muted hover:text-ink;
+  }
+
+  .site-header-nav-link--active {
+    @apply text-ink;
+  }
+
+  .site-header-actions {
+    @apply flex shrink-0 items-center gap-1 sm:gap-1.5 lg:justify-self-end;
+  }
+
+  .site-header-action {
+    @apply relative flex h-9 w-9 items-center justify-center rounded-full text-stone-500 transition duration-site ease-site hover:bg-surface-muted hover:text-ink;
+  }
+
+  .site-header-action--active {
+    @apply bg-surface-muted text-ink;
+  }
+
+  .site-header-cart-badge {
+    @apply absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-ink px-1 text-[10px] font-semibold leading-none text-white;
+  }
+
+  .site-header-cta {
+    @apply ml-1 hidden px-4 py-2 text-xs sm:inline-flex;
+  }
+
+  .site-header-lang-select {
+    @apply rounded-full border-0 bg-transparent py-1.5 pl-3 pr-7 text-xs text-stone-500 outline-none ring-1 ring-line transition hover:text-ink focus:ring-stone-400/35;
+  }
+
+  .site-header-menu-btn {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-600 transition hover:bg-surface-muted hover:text-ink;
+  }
+
+  .site-header-menu-icon {
+    @apply flex w-4 flex-col gap-[5px];
+  }
+
+  .site-header-menu-icon span {
+    @apply block h-px w-full bg-current transition;
+  }
+
+  /* Arama şeridi */
+  .site-header-search {
+    @apply border-t border-line/50 bg-surface-soft/95;
+  }
+
+  .site-header-search-form {
+    @apply mx-auto flex max-w-site items-center gap-2 px-5 py-3 sm:gap-3 sm:px-8;
+  }
+
+  .site-header-search-input {
+    @apply min-w-0 flex-1 border-0 border-b border-line/80 bg-transparent py-2.5 font-display text-lg text-ink outline-none transition placeholder:text-stone-300 focus:border-stone-400 sm:text-xl;
+  }
+
+  /* Mega menü */
+  .site-mega-backdrop {
+    @apply fixed inset-0 z-40 bg-stone-950/20 backdrop-blur-[2px];
+  }
+
+  .site-mega-panel {
+    @apply absolute inset-x-0 top-full z-50 max-h-[min(85dvh,calc(100dvh-5rem))] overflow-y-auto border-t border-line/60 bg-white shadow-card;
+  }
+
+  .site-mega-inner {
+    @apply mx-auto grid max-w-site gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,16rem)_1fr] lg:gap-10 lg:py-10 xl:grid-cols-[minmax(0,18rem)_1fr];
+  }
+
+  .site-mega-aside {
+    @apply flex flex-col;
+  }
+
+  .site-mega-kicker {
+    @apply text-[10px] font-medium uppercase tracking-[0.2em] text-stone-400;
+  }
+
+  .site-mega-title {
+    @apply mt-2 text-2xl leading-snug text-ink sm:text-3xl;
+  }
+
+  .site-mega-lead {
+    @apply mt-3 text-sm leading-relaxed text-stone-500;
+  }
+
+  .site-mega-search {
+    @apply mt-6 flex gap-2 border-b border-line pb-1;
+  }
+
+  .site-mega-search-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-ink outline-none placeholder:text-stone-300;
+  }
+
+  .site-mega-search-btn {
+    @apply shrink-0 text-xs font-medium text-stone-500 transition hover:text-ink;
+  }
+
+  .site-mega-aside-links {
+    @apply mt-auto space-y-2 pt-8;
+  }
+
+  .site-mega-link {
+    @apply block text-sm font-medium text-ink transition hover:text-cotta;
+  }
+
+  .site-mega-link--muted {
+    @apply font-normal text-stone-500 hover:text-ink;
+  }
+
+  .site-mega-grid-wrap {
+    @apply grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)] lg:gap-5;
+  }
+
+  .site-mega-feature {
+    @apply relative overflow-hidden rounded-site-lg bg-stone-100 lg:row-span-2;
+  }
+
+  .site-mega-feature-media {
+    @apply relative aspect-[4/5] overflow-hidden sm:aspect-[3/4] lg:h-full lg:min-h-[18rem];
+  }
+
+  .site-mega-feature-shade {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/10 to-transparent;
+  }
+
+  .site-mega-feature-copy {
+    @apply absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5 text-white;
+  }
+
+  .site-mega-feature-tag {
+    @apply text-[10px] font-medium uppercase tracking-[0.18em] text-white/60;
+  }
+
+  .site-mega-feature-name {
+    @apply font-display text-2xl leading-tight;
+  }
+
+  .site-mega-feature-meta {
+    @apply text-xs text-white/70;
+  }
+
+  .site-mega-grid {
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .site-mega-tile {
+    @apply flex flex-col rounded-site border border-transparent p-2 transition duration-soft ease-soft hover:border-line hover:bg-surface-soft;
+  }
+
+  .site-mega-tile--active {
+    @apply border-line bg-surface-muted;
+  }
+
+  .site-mega-tile-media {
+    @apply block aspect-[5/4] overflow-hidden rounded-lg bg-stone-100;
+  }
+
+  .site-mega-tile-body {
+    @apply mt-2 flex items-baseline justify-between gap-2 px-0.5;
+  }
+
+  .site-mega-tile-name {
+    @apply truncate text-sm font-medium text-ink transition group-hover:text-ink;
+  }
+
+  .site-mega-tile-count {
+    @apply shrink-0 text-[11px] tabular-nums text-stone-400;
+  }
+
+  /* Mobil çekmece */
+  .site-mobile-backdrop {
+    @apply fixed inset-0 z-[60] bg-black/25 backdrop-blur-[1px];
+  }
+
+  .site-mobile-drawer {
+    @apply fixed inset-y-0 right-0 z-[70] flex w-[min(100vw,360px)] flex-col border-l border-line bg-white shadow-xl;
+  }
+
+  .site-mobile-head {
+    @apply flex items-center justify-between border-b border-line px-5 py-4;
+  }
+
+  .site-mobile-body {
+    @apply flex-1 overflow-y-auto px-5 py-5;
+  }
+
+  .site-mobile-search {
+    @apply mb-6 flex gap-2 rounded-full border border-line bg-surface-soft pl-4 pr-1.5;
+  }
+
+  .site-mobile-search-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-stone-400;
+  }
+
+  .site-mobile-search-btn {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-500 transition hover:bg-white hover:text-ink;
+  }
+
+  .site-mobile-section-trigger {
+    @apply flex w-full items-center justify-between py-2 text-left text-sm font-medium text-ink;
+  }
+
+  .site-mobile-cat-grid {
+    @apply mt-3 grid grid-cols-2 gap-2.5;
+  }
+
+  .site-mobile-cat-tile {
+    @apply flex flex-col rounded-site border border-line/70 bg-white p-2 transition hover:border-stone-300;
+  }
+
+  .site-mobile-cat-tile--active {
+    @apply border-ink/30 bg-surface-muted;
+  }
+
+  .site-mobile-cat-media {
+    @apply block aspect-[4/3] overflow-hidden rounded-md bg-stone-100;
+  }
+
+  .site-mobile-cat-name {
+    @apply mt-2 truncate text-xs font-medium text-ink;
+  }
+
+  .site-mobile-cat-count {
+    @apply text-[10px] tabular-nums text-stone-400;
+  }
+
+  .site-mobile-links {
+    @apply mt-8 flex flex-col border-t border-line pt-6;
+  }
+
+  .site-mobile-link {
+    @apply border-b border-line/60 py-3.5 text-sm font-medium text-stone-600 transition hover:text-ink;
+  }
+
+  .site-mobile-link--active {
+    @apply text-ink;
+  }
+
+  .site-mobile-actions {
+    @apply mt-6 space-y-2;
+  }
+
+  .site-mobile-lang {
+    @apply mt-8 flex items-center justify-between gap-3 border-t border-line pt-6 text-sm text-stone-600;
   }
 
   .site-brand-title {
     @apply font-display text-xl font-normal tracking-tight text-ink sm:text-2xl;
+  }
+
+  /* —— Ortak sayfa / bölüm dili —— */
+  .site-page {
+    @apply pb-16 md:pb-20;
+  }
+
+  .site-page-hero {
+    @apply max-w-2xl;
+  }
+
+  .site-page-kicker,
+  .site-section-kicker {
+    @apply site-eyebrow;
+  }
+
+  .site-page-hero-title {
+    @apply site-page-title mt-2;
+  }
+
+  .site-page-hero-lead {
+    @apply site-body mt-4 max-w-xl text-[15px] leading-relaxed text-stone-600;
+  }
+
+  .site-section {
+    @apply mx-auto max-w-site px-5 sm:px-8;
+  }
+
+  .site-section-head {
+    @apply flex flex-wrap items-end justify-between gap-4;
+  }
+
+  .site-section-head-main {
+    @apply min-w-0 max-w-xl;
+  }
+
+  .site-section-head-title {
+    @apply mt-2 font-display text-3xl font-normal tracking-tight text-ink sm:text-4xl;
+  }
+
+  .site-section-lead {
+    @apply site-body mt-3;
+  }
+
+  .site-section-more {
+    @apply shrink-0 text-sm font-medium text-stone-500 transition duration-site ease-site hover:text-ink;
+  }
+
+  .site-tabs {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .site-tab {
+    @apply inline-flex items-center rounded-full border border-line/80 bg-white px-4 py-1.5 text-sm text-stone-600 shadow-soft transition duration-site ease-site hover:border-stone-300 hover:text-ink;
+  }
+
+  .site-tab--on {
+    @apply border-ink bg-ink text-white shadow-none hover:border-ink hover:text-white;
+  }
+
+  .site-tab-count {
+    @apply ml-1.5 text-xs tabular-nums text-stone-400;
+  }
+
+  .site-tab--on .site-tab-count {
+    @apply text-white/60;
+  }
+
+  .site-chip {
+    @apply site-tab;
+  }
+
+  .site-chip--on {
+    @apply site-tab--on;
+  }
+
+  .site-search-line {
+    @apply w-full border-0 border-b border-line/80 bg-transparent py-3 font-display text-xl text-ink outline-none transition placeholder:text-stone-300 focus:border-stone-400 sm:text-2xl;
+  }
+
+  .site-set-grid {
+    @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .site-set-card {
+    @apply flex h-full flex-col overflow-hidden rounded-site-lg border border-line/60 bg-white transition duration-soft ease-soft hover:border-stone-300/80 hover:shadow-soft;
+  }
+
+  .site-set-card-media {
+    @apply relative aspect-[4/3] overflow-hidden bg-surface-muted;
+  }
+
+  .site-set-card-badge {
+    @apply absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-stone-600 shadow-soft backdrop-blur-sm;
+  }
+
+  .site-set-card-discount {
+    @apply absolute right-3 top-3 rounded-full bg-ink/90 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white;
+  }
+
+  .site-set-card-body {
+    @apply flex flex-1 flex-col p-5;
+  }
+
+  .site-set-card-name {
+    @apply text-base font-medium text-ink;
+  }
+
+  .site-set-card-tag {
+    @apply mt-1.5 line-clamp-2 text-sm leading-relaxed text-stone-500;
+  }
+
+  .site-set-card-foot {
+    @apply mt-auto flex items-end justify-between gap-3 border-t border-line/50 pt-4;
+  }
+
+  .site-set-card-price {
+    @apply text-sm font-semibold tabular-nums text-ink;
+  }
+
+  .site-set-card-try {
+    @apply text-[11px] tabular-nums text-stone-400;
+  }
+
+  .site-set-card-meta {
+    @apply text-xs text-stone-400 transition group-hover:text-ink;
+  }
+
+  .site-catalog-teaser {
+    @apply flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  .site-catalog-teaser-copy {
+    @apply max-w-lg;
   }
 
   /* Yüzeyler — ince çizgi, yumuşak gölge */
@@ -110,7 +543,7 @@
   }
 
   .site-btn-text {
-    @apply inline-flex items-center gap-1 text-sm font-medium text-cotta transition duration-site ease-site hover:text-cotta-dark;
+    @apply inline-flex items-center gap-1 text-sm font-medium text-ink transition duration-site ease-site hover:text-cotta;
   }
 
   .site-btn-icon {
@@ -118,7 +551,7 @@
   }
 
   .site-input {
-    @apply w-full rounded-full border-0 bg-white px-4 py-2.5 text-sm text-ink shadow-soft outline-none ring-1 ring-line transition duration-site ease-site placeholder:text-stone-400 focus:ring-cotta/30;
+    @apply w-full rounded-full border-0 bg-white px-4 py-2.5 text-sm text-ink shadow-soft outline-none ring-1 ring-line transition duration-site ease-site placeholder:text-stone-400 focus:ring-stone-400/35;
   }
 
   .site-pill {
@@ -172,7 +605,7 @@
   }
 
   .shop-card-media-overlay {
-    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/45 via-transparent to-transparent opacity-0 transition duration-soft ease-soft;
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/30 via-transparent to-transparent opacity-0 transition duration-soft ease-soft;
   }
 
   .shop-card:hover .shop-card-media-overlay {
@@ -239,6 +672,12 @@
   }
 
   /* —— Ana sayfa v2 —— */
+  .site-hscroll {
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+
   .home-breakout {
     @apply relative w-screen max-w-[100vw];
     margin-left: calc(50% - 50vw);
@@ -246,7 +685,347 @@
   }
 
   .home-v2 {
-    @apply flex flex-col gap-20 pb-12 md:gap-28 md:pb-16;
+    --home-rail-w: 11.75rem;
+    --home-rail-w-lg: 13.25rem;
+    --home-rail-featured-w: 14.25rem;
+    --home-rail-featured-w-lg: 16.5rem;
+    --home-media-radius: 1.125rem;
+    @apply flex flex-col gap-12 bg-white pb-14 md:gap-16 md:pb-20;
+  }
+
+  .home-media {
+    @apply overflow-hidden rounded-site-lg bg-stone-100;
+  }
+
+  .home-v2 .site-section-head-title {
+    @apply text-2xl font-light sm:text-3xl;
+  }
+
+  .home-v2 .site-section-lead {
+    @apply text-sm text-stone-400;
+  }
+
+  /* Yumuşak sekme — çizgi altı, arka plansız */
+  .home-soft-tabs {
+    @apply site-hscroll flex gap-5 overflow-x-auto border-b border-line/40 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+  }
+
+  .home-soft-tab {
+    @apply -mb-px shrink-0 border-b-2 border-transparent pb-3 text-sm text-stone-400 transition duration-soft ease-soft hover:text-ink;
+  }
+
+  .home-soft-tab--on {
+    @apply border-ink text-ink;
+  }
+
+  .home-soft-tab-count {
+    @apply ml-1.5 text-xs tabular-nums text-stone-300;
+  }
+
+  .home-soft-tab--on .home-soft-tab-count {
+    @apply text-stone-400;
+  }
+
+  /* Kategori film şeridi */
+  .home-category-film {
+    @apply py-6 md:py-8;
+  }
+
+  .home-category-film-head {
+    @apply mb-6;
+  }
+
+  .home-category-film-title {
+    @apply mt-2 text-2xl font-light text-ink sm:text-3xl;
+  }
+
+  .home-category-film-track-wrap {
+    @apply home-breakout;
+  }
+
+  .home-category-film-track {
+    @apply site-hscroll flex gap-4 overflow-x-auto px-5 pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 sm:px-8 [&::-webkit-scrollbar]:hidden;
+  }
+
+  .home-category-film-card {
+    @apply home-media relative block aspect-[4/5] w-[var(--home-rail-w)] shrink-0 sm:w-[var(--home-rail-w-lg)];
+  }
+
+  .home-category-film-shade {
+    @apply absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/15 to-transparent;
+  }
+
+  .home-category-film-copy {
+    @apply absolute inset-x-0 bottom-0 z-[2] flex flex-col gap-0.5 p-4 text-white;
+  }
+
+  .home-category-film-name {
+    @apply text-sm font-medium leading-tight;
+  }
+
+  .home-category-film-count {
+    @apply text-[11px] text-white/65;
+  }
+
+  /* Set bento — editoryal grid */
+  .home-set-bento {
+    @apply grid gap-5;
+  }
+
+  @media (min-width: 640px) {
+    .home-set-bento:has(.home-set-bento-feature) {
+      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .home-set-bento:not(:has(.home-set-bento-feature)) {
+      @apply grid-cols-2;
+    }
+  }
+
+  .home-set-bento-feature {
+    @apply sm:row-span-2;
+  }
+
+  .home-set-card {
+    @apply flex h-full min-h-0 flex-col;
+  }
+
+  .home-set-card-media {
+    @apply home-media relative aspect-[4/3];
+  }
+
+  .home-set-bento-feature .home-set-card-media {
+    @apply aspect-auto min-h-[20rem] flex-1 sm:min-h-0;
+  }
+
+  .home-set-card-shade {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-950/35 via-transparent to-transparent opacity-0 transition duration-soft ease-soft group-hover:opacity-100;
+  }
+
+  .home-set-card-overlay {
+    @apply absolute left-3 top-3 z-[2] flex flex-col items-start gap-2;
+  }
+
+  .home-set-card-body {
+    @apply flex flex-1 flex-col pt-4;
+  }
+
+  .home-set-card-name {
+    @apply text-base font-medium text-ink;
+  }
+
+  .home-set-card-tag {
+    @apply mt-1.5 line-clamp-2 text-sm leading-relaxed text-stone-500;
+  }
+
+  .home-set-card-foot {
+    @apply mt-auto flex items-end justify-between gap-3 pt-4;
+  }
+
+  .home-set-card-price {
+    @apply text-sm font-semibold tabular-nums text-ink;
+  }
+
+  .home-set-card-try {
+    @apply text-[11px] tabular-nums text-stone-400;
+  }
+
+  .home-set-card-meta {
+    @apply text-xs text-stone-400 transition group-hover:text-ink;
+  }
+
+  /* Atölye — görsel + hizmet */
+  .home-atelier-editorial {
+    @apply grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:items-start;
+  }
+
+  .home-atelier-visual {
+    @apply home-media relative block min-h-[18rem] sm:min-h-[22rem] lg:min-h-[26rem];
+  }
+
+  .home-atelier-visual-shade {
+    @apply absolute inset-0 bg-gradient-to-t from-stone-950/65 via-stone-950/10 to-transparent;
+  }
+
+  .home-atelier-visual-copy {
+    @apply absolute inset-x-0 bottom-0 z-[2] flex flex-col gap-2 p-6 sm:p-8;
+  }
+
+  .home-atelier-visual-kicker {
+    @apply text-[10px] font-medium uppercase tracking-[0.22em] text-white/60;
+  }
+
+  .home-atelier-visual-title {
+    @apply text-2xl leading-tight text-white sm:text-3xl;
+  }
+
+  .home-atelier-visual-cta {
+    @apply mt-2 text-sm font-medium text-white/80 transition group-hover:text-white;
+  }
+
+  .home-atelier-side-lead {
+    @apply text-sm leading-relaxed text-stone-500 sm:text-base;
+  }
+
+  .home-atelier-services {
+    @apply mt-6 divide-y divide-line/40 border-t border-line/40;
+  }
+
+  .home-atelier-service {
+    @apply flex items-center gap-4 py-5 transition duration-soft ease-soft sm:py-6;
+    @apply hover:text-cotta;
+  }
+
+  .home-atelier-service-media {
+    @apply home-media h-14 w-14 shrink-0 sm:h-16 sm:w-16;
+  }
+
+  .home-atelier-service-body {
+    @apply min-w-0 flex-1;
+  }
+
+  .home-atelier-service-title {
+    @apply block text-sm font-medium text-ink;
+  }
+
+  .home-atelier-service-text {
+    @apply mt-1 block text-xs leading-relaxed text-stone-400 sm:text-sm;
+  }
+
+  .home-atelier-service-arrow {
+    @apply shrink-0 text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-cotta;
+  }
+
+  /* Ana sayfa — tutarlı ray kartları */
+  .home-rail-card {
+    @apply w-[var(--home-rail-w)] shrink-0 sm:w-[var(--home-rail-w-lg)];
+  }
+
+  .home-rail-card--featured {
+    @apply w-[var(--home-rail-featured-w)] sm:w-[var(--home-rail-featured-w-lg)];
+  }
+
+  .home-rail-card-media {
+    @apply home-media relative block aspect-[4/5];
+  }
+
+  .home-v2 .home-rail-card-media {
+    @apply border-0;
+  }
+
+  .home-v2 .home-rail-card-badge {
+    @apply bg-white/80 shadow-none;
+  }
+
+  .home-v2 .home-rail-card-add {
+    @apply border-line/60 bg-transparent;
+  }
+
+  .home-v2 .home-rails-arrow {
+    @apply border-0 bg-transparent text-stone-300 shadow-none hover:bg-transparent hover:text-ink;
+  }
+
+  .home-v2 .site-set-card {
+    @apply border-0 bg-transparent shadow-none;
+  }
+
+  .home-v2 .site-set-card-badge,
+  .home-v2 .site-set-card-discount {
+    @apply shadow-none;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cats {
+    @apply site-hscroll flex gap-5 overflow-x-auto pb-1 pt-5 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-6 [&::-webkit-scrollbar]:hidden;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat {
+    @apply shrink-0 rounded-none border-0 bg-transparent px-0 py-1 text-sm text-stone-400 hover:text-ink;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat--visual {
+    @apply flex w-[5.5rem] flex-col items-start gap-2 p-0 text-left hover:opacity-90 sm:w-[6rem];
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat--visual.catalog-browse-cat--on {
+    @apply text-ink;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat--visual.catalog-browse-cat--on .catalog-browse-cat-thumb {
+    @apply ring-2 ring-ink ring-offset-2 ring-offset-white;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat-thumb {
+    @apply home-media block aspect-square w-full;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat-label {
+    @apply line-clamp-2 text-xs leading-snug sm:text-sm;
+  }
+
+  .home-v2 .shop-card {
+    @apply rounded-site border-0 bg-transparent shadow-none;
+  }
+
+  .home-v2 .shop-card-media {
+    @apply home-media;
+  }
+
+  .home-v2 .shop-card-badge {
+    @apply bg-white/85 shadow-none;
+  }
+
+  /* Katalog — minimal varyant (ana sayfa) */
+  .catalog-browse--minimal .catalog-browse-panel {
+    @apply border-0 bg-transparent p-0 shadow-none;
+  }
+
+  .catalog-browse--minimal .catalog-browse-search {
+    @apply gap-4 border-b border-line/40 pb-4;
+  }
+
+  .catalog-browse--minimal .catalog-browse-search-input {
+    @apply text-lg sm:text-xl;
+  }
+
+  .catalog-browse--minimal .catalog-browse-search-btn {
+    @apply site-btn-ghost shrink-0 px-4 py-2 text-sm normal-case tracking-normal;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cats {
+    @apply gap-4 pt-4;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat {
+    @apply rounded-none border-0 bg-transparent px-0 py-1 text-sm text-stone-400 hover:text-ink;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat--on {
+    @apply bg-transparent text-ink underline decoration-line underline-offset-[6px] hover:text-ink;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat-count {
+    @apply text-stone-300;
+  }
+
+  .catalog-browse--minimal .catalog-browse-cat--on .catalog-browse-cat-count {
+    @apply text-stone-400;
+  }
+
+  .catalog-browse--minimal .catalog-browse-controls {
+    @apply border-y-0 border-t border-line/40 py-3;
+  }
+
+  .catalog-browse--minimal .catalog-browse-select {
+    @apply rounded-none border-0 border-b border-line/50 bg-transparent px-0 py-1;
+  }
+
+  .catalog-browse--minimal .catalog-browse-active-chip {
+    @apply border-0 bg-transparent px-0 text-stone-500 hover:text-cotta;
+  }
+
+  .catalog-browse--minimal .catalog-browse-results {
+    @apply pt-4;
   }
 
   /* Sinematik hero */
@@ -255,7 +1034,22 @@
   }
 
   .home-cinema-stage {
-    @apply absolute inset-0;
+    @apply absolute inset-0 overflow-hidden;
+  }
+
+  .home-cinema-slide {
+    @apply absolute inset-0 transition-opacity duration-[1400ms] ease-soft motion-reduce:transition-none;
+  }
+
+  .home-cinema-slide-img {
+    @apply h-full w-full object-cover will-change-transform motion-reduce:will-change-auto;
+    object-position: center 42%;
+    transform: scale(1.05);
+    filter: saturate(1.05) contrast(1.04) brightness(0.97);
+  }
+
+  .home-cinema-slide-img--active {
+    @apply motion-safe:animate-home-cinema-zoom motion-reduce:scale-105 motion-reduce:animate-none;
   }
 
   .home-cinema-fallback {
@@ -263,7 +1057,7 @@
   }
 
   .home-cinema-vignette {
-    @apply pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-stone-950/75 via-stone-950/15 to-transparent;
+    @apply pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-stone-950/55 via-stone-950/10 to-transparent;
   }
 
   .home-cinema-copy {
@@ -279,7 +1073,7 @@
   }
 
   .home-cinema-lead {
-    @apply mt-5 max-w-md text-sm leading-relaxed text-white/70;
+    @apply mt-5 max-w-md line-clamp-2 text-sm leading-relaxed text-white/70;
   }
 
   .home-cinema-actions {
@@ -290,20 +1084,20 @@
     @apply inline-flex items-center justify-center rounded-full px-6 py-2.5 text-[13px] font-medium tracking-wide transition duration-soft ease-soft;
   }
 
-  .home-cinema-cta--solid {
+  .home-cinema-cta--primary {
     @apply bg-white/95 text-ink hover:bg-white;
   }
 
-  .home-cinema-cta--line {
-    @apply border border-white/30 text-white/90 hover:border-white/50 hover:bg-white/5;
+  .home-cinema-cta--link {
+    @apply rounded-none px-2 py-2.5 text-white/75 underline-offset-4 hover:text-white hover:underline;
   }
 
   .home-cinema-progress {
-    @apply mt-10 text-[11px] tracking-wider text-white/40;
+    @apply mt-8 text-[10px] tracking-[0.2em] text-white/35;
   }
 
   .home-cinema-chip {
-    @apply mb-4 inline-flex max-w-xs text-[10px] font-medium uppercase tracking-[0.18em] text-white/80;
+    @apply mb-3 inline-flex max-w-[min(100%,18rem)] truncate rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-white/85 backdrop-blur-sm;
   }
 
   /* Kayan oda bandı */
@@ -365,7 +1159,7 @@
   }
 
   .home-lookbook-title {
-    @apply font-display text-3xl text-ink sm:text-4xl;
+    @apply font-display text-2xl font-light text-ink sm:text-3xl;
   }
 
   .home-lookbook-hint {
@@ -397,33 +1191,47 @@
   }
 
   .home-lookbook-rail-viewport--scroll {
-    @apply overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+    @apply site-hscroll overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:px-8 [&::-webkit-scrollbar]:hidden;
   }
 
   .home-lookbook-rail {
-    @apply flex w-max snap-x snap-mandatory gap-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+    @apply flex w-max snap-x snap-mandatory gap-4 sm:gap-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
   }
 
   .home-lookbook-rail--scroll {
-    @apply snap-none will-change-transform;
+    @apply snap-none gap-0 will-change-transform;
+    backface-visibility: hidden;
   }
 
   .home-lookbook-card {
-    @apply block shrink-0 snap-start;
+    @apply block shrink-0 snap-start snap-always;
     flex: 0 0 var(--lookbook-slide, 100vw);
     width: var(--lookbook-slide, 100vw);
   }
 
+  .home-lookbook-rail:not(.home-lookbook-rail--scroll) .home-lookbook-card {
+    @apply max-w-[42rem];
+  }
+
   .home-lookbook-media {
-    @apply relative h-[min(62vh,560px)] w-full overflow-hidden bg-stone-100 sm:h-[min(68vh,620px)];
+    @apply home-media relative aspect-[4/3] w-full sm:aspect-[16/10];
+  }
+
+  .home-lookbook-rail--scroll .home-lookbook-media {
+    @apply aspect-auto h-[min(58vh,520px)] rounded-none sm:h-[min(64vh,580px)];
+  }
+
+  .home-lookbook-media-inner {
+    @apply absolute inset-0 origin-center will-change-transform;
+    backface-visibility: hidden;
+  }
+
+  .home-lookbook-copy {
+    @apply absolute inset-0 z-[2] flex flex-col justify-between p-6 will-change-[opacity,transform] sm:p-10 md:p-12;
   }
 
   .home-lookbook-shade {
     @apply absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-stone-950/10;
-  }
-
-  .home-lookbook-copy {
-    @apply absolute inset-0 z-[2] flex flex-col justify-between p-6 sm:p-10 md:p-12;
   }
 
   .home-lookbook-copy-top {
@@ -515,64 +1323,133 @@
     @apply h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-stone-100;
   }
 
-  /* Paketler — yumuşak koyu bant */
+  .site-main {
+    @apply mx-auto max-w-site;
+  }
+
+  .site-main--home {
+    @apply px-0 py-0;
+  }
+
+  /* Paketler — ana sayfa önizleme (açık kart grid) */
   .home-packages {
-    @apply bg-[#2f2d2b] text-white;
+    @apply site-section;
   }
 
-  .home-packages-inner {
-    @apply mx-auto max-w-site px-6 py-14 sm:px-10 md:py-20;
+  /* Katalog vitrin — arama, filtre, grid */
+  .catalog-browse {
+    @apply mx-auto max-w-site px-5 sm:px-8;
   }
 
-  .home-packages-head {
-    @apply max-w-lg;
+  .catalog-browse-shell {
+    @apply space-y-6;
   }
 
-  .home-packages-title {
-    @apply font-display text-3xl leading-snug sm:text-[2.75rem];
+  .catalog-browse-panel {
+    @apply overflow-hidden rounded-site-lg border border-line/60 bg-white p-5 shadow-soft sm:p-6 md:p-8;
   }
 
-  .home-packages-lead {
-    @apply mt-4 text-sm leading-relaxed text-stone-400;
+  .catalog-browse-panel--flat {
+    @apply border-0 bg-transparent p-0 shadow-none;
   }
 
-  .home-packages-list {
-    @apply mt-10 divide-y divide-white/10;
+  .catalog-browse-search {
+    @apply flex flex-col gap-3 border-b border-line/60 pb-5 sm:flex-row sm:items-center;
   }
 
-  .home-package-row {
-    @apply grid grid-cols-[auto_4rem_1fr_auto] items-center gap-4 py-5 transition duration-soft ease-soft hover:bg-white/[0.03] sm:grid-cols-[auto_5rem_1fr_auto] sm:gap-6 sm:py-6;
+  .catalog-browse-search-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent py-2 font-display text-xl text-ink outline-none placeholder:text-stone-300 sm:text-2xl;
   }
 
-  .home-package-num {
-    @apply text-xs tabular-nums text-stone-500;
+  .catalog-browse-search-btn {
+    @apply shrink-0 px-6 py-2.5 text-sm;
   }
 
-  .home-package-thumb {
-    @apply h-14 w-16 overflow-hidden rounded-lg bg-stone-800 sm:h-16 sm:w-20;
+  .catalog-browse-cats {
+    @apply flex gap-2 overflow-x-auto pb-1 pt-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
   }
 
-  .home-package-name {
-    @apply text-sm font-medium text-white sm:text-base;
+  .catalog-browse-cat {
+    @apply inline-flex shrink-0 items-center gap-2 rounded-full border border-line/80 bg-surface-soft px-4 py-2 text-sm text-stone-600 transition duration-soft ease-soft hover:border-stone-300 hover:text-ink;
   }
 
-  .home-package-tag {
-    @apply mt-0.5 line-clamp-1 text-xs text-stone-400;
+  .catalog-browse-cat--on {
+    @apply border-ink bg-ink text-white hover:border-ink hover:text-white;
   }
 
-  .home-package-meta {
-    @apply mt-1 text-xs text-cotta-muted;
+  .catalog-browse-cat-count {
+    @apply text-xs tabular-nums text-stone-400;
   }
 
-  .home-package-price {
-    @apply text-right;
+  .catalog-browse-cat--on .catalog-browse-cat-count {
+    @apply text-white/65;
   }
 
-  .home-package-arrow {
-    @apply mt-2 block text-stone-500 transition group-hover:text-white;
+  .catalog-browse-active {
+    @apply flex flex-wrap items-center gap-2 pt-4;
   }
 
-  /* Katalog — açılır panel */
+  .catalog-browse-active-chip {
+    @apply inline-flex items-center rounded-full border border-line/80 bg-white px-3 py-1 text-xs text-stone-600 transition hover:border-cotta/40 hover:text-cotta;
+  }
+
+  .catalog-browse-active-reset {
+    @apply text-xs font-medium text-stone-400 transition hover:text-cotta;
+  }
+
+  .catalog-browse-controls {
+    @apply mt-4 flex flex-col gap-3 border-y border-line/60 py-4 sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  .catalog-browse-total {
+    @apply text-sm text-stone-500;
+  }
+
+  .catalog-browse-total-num {
+    @apply font-medium tabular-nums text-ink;
+  }
+
+  .catalog-browse-filters {
+    @apply flex flex-wrap gap-3;
+  }
+
+  .catalog-browse-filter {
+    @apply inline-flex items-center gap-2;
+  }
+
+  .catalog-browse-filter-label {
+    @apply text-xs text-stone-500;
+  }
+
+  .catalog-browse-select {
+    @apply rounded-full border border-line/80 bg-white px-3 py-1.5 text-xs text-ink outline-none transition hover:border-stone-300 focus:border-stone-400;
+  }
+
+  .catalog-browse-category-link {
+    @apply mt-3 inline-flex text-xs text-stone-500 transition hover:text-cotta hover:underline;
+  }
+
+  .catalog-browse-results {
+    @apply scroll-mt-28 pt-6;
+  }
+
+  .catalog-browse-empty {
+    @apply py-16 text-center;
+  }
+
+  .catalog-browse-empty-title {
+    @apply text-lg font-light text-ink;
+  }
+
+  .catalog-browse-empty-lead {
+    @apply mt-2 text-sm text-stone-500;
+  }
+
+  .catalog-browse-pagination {
+    @apply mt-10 flex flex-wrap items-center justify-center gap-2;
+  }
+
+  /* Eski koyu bant stilleri kaldırıldı — site-set-* kullanılıyor */
   .home-catalog-v2 {
     @apply border-t border-line/60 pt-12;
   }
@@ -606,7 +1483,7 @@
   }
 
   .home-catalog-search-input {
-    @apply w-full border-0 border-b border-line/80 bg-transparent py-3 font-display text-xl text-ink outline-none transition placeholder:text-stone-300 focus:border-cotta/40;
+    @apply w-full border-0 border-b border-line/80 bg-transparent py-3 font-display text-xl text-ink outline-none transition placeholder:text-stone-300 focus:border-stone-400;
   }
 
   .home-catalog-chips {
@@ -614,15 +1491,15 @@
   }
 
   .home-chip {
-    @apply rounded-full border border-line px-4 py-1.5 text-sm text-stone-600 transition hover:border-stone-400 hover:text-ink;
+    @apply site-tab;
   }
 
   .home-chip--on {
-    @apply border-ink bg-ink text-white hover:border-ink hover:text-white;
+    @apply site-tab--on;
   }
 
   .home-catalog-more {
-    @apply self-center text-xs text-cotta hover:underline;
+    @apply self-center text-xs text-stone-500 transition hover:text-cotta hover:underline;
   }
 
   .home-catalog-bar {
@@ -631,10 +1508,6 @@
 
   .home-catalog-empty {
     @apply py-20 text-center;
-  }
-
-  .home-cinema-chip {
-    @apply mb-3 inline-flex max-w-xs rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white/90 backdrop-blur-sm;
   }
 
   .home-cinema-side-label {
@@ -687,50 +1560,7 @@
     @apply ml-6 text-[10px] text-cotta/50;
   }
 
-  /* Atölye + hizmetler */
-  .home-atelier {
-    @apply mx-auto max-w-site px-5 sm:px-8;
-  }
-
-  .home-atelier-card {
-    @apply grid gap-10 rounded-site-lg border border-line/50 bg-white p-8 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14 lg:p-12;
-  }
-
-  .home-atelier-main {
-    @apply max-w-md;
-  }
-
-  .home-atelier-eyebrow {
-    @apply text-[10px] uppercase tracking-[0.22em] text-stone-400;
-  }
-
-  .home-atelier-title {
-    @apply mt-3 text-4xl leading-tight text-ink sm:text-5xl;
-  }
-
-  .home-atelier-body {
-    @apply mt-5 text-sm leading-relaxed text-stone-500;
-  }
-
-  .home-atelier-link {
-    @apply mt-7 inline-flex text-sm font-medium text-cotta transition duration-soft ease-soft hover:text-cotta-dark;
-  }
-
-  .home-atelier-services {
-    @apply flex flex-col justify-center gap-3 border-t border-line/60 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0;
-  }
-
-  .home-atelier-service {
-    @apply block rounded-site border border-transparent px-4 py-3 transition duration-soft ease-soft hover:border-line/80 hover:bg-surface-soft;
-  }
-
-  .home-atelier-service-title {
-    @apply block text-sm font-medium text-ink;
-  }
-
-  .home-atelier-service-body {
-    @apply mt-0.5 block text-xs leading-relaxed text-stone-400;
-  }
+  /* Atölye — legacy shell kaldırıldı; .home-atelier-editorial kullanılıyor */
 
   /* Yan nokta navigasyon */
   .home-dots {
@@ -783,35 +1613,7 @@
   }
 
   .home-rails {
-    @apply mx-auto max-w-site px-5 sm:px-8;
-  }
-
-  .home-rails-head {
-    @apply mb-6 flex flex-wrap items-end justify-between gap-4;
-  }
-
-  .home-rails-title {
-    @apply font-display text-3xl text-ink sm:text-4xl;
-  }
-
-  .home-rails-lead {
-    @apply mt-2 text-sm text-stone-400;
-  }
-
-  .home-rails-more {
-    @apply shrink-0 text-sm text-stone-500 transition duration-soft ease-soft hover:text-cotta;
-  }
-
-  .home-rails-tabs {
-    @apply mb-5 flex flex-wrap gap-2;
-  }
-
-  .home-rails-tab {
-    @apply rounded-full border border-line/70 bg-transparent px-4 py-1.5 text-xs font-medium text-stone-500 transition duration-soft ease-soft hover:border-stone-300 hover:text-ink;
-  }
-
-  .home-rails-tab--on {
-    @apply border-cotta/40 bg-cotta-light/60 text-cotta-dark hover:border-cotta/40;
+    /* legacy alias — HomeProductRails artık site-section kullanıyor */
   }
 
   .home-rails-wrap {
@@ -819,7 +1621,7 @@
   }
 
   .home-rails-track {
-    @apply -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:-mx-8 sm:gap-5 sm:px-8 [&::-webkit-scrollbar]:hidden;
+    @apply site-hscroll -mx-5 overflow-x-auto px-5 pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden;
   }
 
   .home-rails-arrow {
@@ -836,14 +1638,6 @@
 
   .home-rails-empty {
     @apply px-5 sm:px-8;
-  }
-
-  .home-rail-card {
-    @apply w-[11.5rem] shrink-0 sm:w-[13.5rem];
-  }
-
-  .home-rail-card-media {
-    @apply relative block aspect-[4/5] overflow-hidden rounded-site-lg border border-line/50 bg-stone-50;
   }
 
   .home-rail-card-badge {

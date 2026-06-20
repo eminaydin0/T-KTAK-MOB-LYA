@@ -45,7 +45,7 @@ export const defaultPackages: CatalogPackage[] = [
     description:
       'Mutfak adası, bar taburesi, üst dolap seti, kiler ve kahvaltı köşesi bankından oluşan modüler paket. Her modül ayrı sipariş edilebilir; tam sette %8 indirim.\n\nKuvars tezgah ve gövde renkleri sipariş sırasında netleştirilir. Yerinde ölçü keşfi ve montaj planı ücretsizdir.',
     imageUrl: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=1200&h=700&fit=crop',
-    kind: 'living_room',
+    kind: 'kitchen',
     productIds: [26, 27, 28, 29, 30],
     bundleDiscountPercent: 8,
   },
@@ -57,7 +57,7 @@ export const defaultPackages: CatalogPackage[] = [
     description:
       'Teak yemek seti, salıncak, şezlong ve bistro setini kapsayan dış mekân paketi. Parça parça alım mümkündür; set halinde %10 tasarruf.\n\nMinder ve örtü aksesuarları sezon başında stoktan gönderilir.',
     imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&h=700&fit=crop',
-    kind: 'living_room',
+    kind: 'outdoor',
     productIds: [31, 32, 33, 34, 35],
     bundleDiscountPercent: 10,
   },
@@ -69,7 +69,7 @@ export const defaultPackages: CatalogPackage[] = [
     description:
       'L masa, ergonomik sandalye, dosya dolabı, ayakta çalışma masası ve misafir sandalyesi setinden oluşan kurumsal paket. Tam sette %12 indirim.\n\nLogo baskı ve toplu teslimat kurumsal siparişlerde uygulanır.',
     imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=700&fit=crop',
-    kind: 'living_room',
+    kind: 'office',
     productIds: [7, 8, 9, 20, 39, 40],
     bundleDiscountPercent: 12,
   },

@@ -8,6 +8,7 @@ import type {
   SiteSettings,
 } from './types'
 import { defaultCarousel, defaultMedia, defaultNavigation } from './defaultSiteSeed'
+import { needsCarouselImageUpgrade } from '../../lib/carouselImage'
 
 /** Aktif vitrin CMS anahtari; v1 loadSiteData icinde migrate edilir. */
 export const SITE_STORAGE_KEY = 'emin-dashboard-site-v2'
@@ -44,8 +45,8 @@ export const defaultSiteData = (): SiteData => ({
       heroTitle: 'Sakin ve zamansız mobilya',
       heroSubtitle:
         'Oturan, çalışan, dinlenen her köşe için düşünülmüş parçalar. Ölçü ve malzeme detaylarını inceleyin; sepete ekleyin veya showroom randevusu alın.',
-      categorySectionTitle: 'Koleksiyonlar',
-      categorySectionSubtitle: 'Odanıza en uygun seriyi bulmak için kategorilere göz atın.',
+      categorySectionTitle: 'EMIN’i keşfedin',
+      categorySectionSubtitle: 'Aşağı kaydırın — üretim, malzeme ve hizmet anlayışımızı tanıyın.',
       filterSectionTitle: 'Arama ve filtrelerle istediğiniz parçaya ulaşın.',
       catalogSectionTitle: 'Tüm parçalar',
       demoSectionTitle: 'Ek demo: B2B örnek aileler',
@@ -57,8 +58,8 @@ export const defaultSiteData = (): SiteData => ({
       heroTitle: 'Calm, timeless furniture',
       heroSubtitle:
         'Thoughtfully designed pieces for every corner of home and work. Explore materials and dimensions — add to cart or book a showroom visit.',
-      categorySectionTitle: 'Collections',
-      categorySectionSubtitle: 'Browse by room and style to find the right series for your space.',
+      categorySectionTitle: 'Discover EMIN',
+      categorySectionSubtitle: 'Scroll to explore our craft, materials, and service.',
       filterSectionTitle: 'Search and filter to find the piece you need.',
       catalogSectionTitle: 'All pieces',
       demoSectionTitle: 'Extra demo: B2B sample families',
@@ -69,7 +70,7 @@ export const defaultSiteData = (): SiteData => ({
 })
 
 function normalizeSlide(raw: Partial<CarouselSlide> & { id: string }): CarouselSlide {
-  return {
+  const slide: CarouselSlide = {
     id: raw.id,
     imageUrl: typeof raw.imageUrl === 'string' ? raw.imageUrl : '',
     title: typeof raw.title === 'string' ? raw.title : '',
@@ -77,6 +78,19 @@ function normalizeSlide(raw: Partial<CarouselSlide> & { id: string }): CarouselS
     linkUrl: typeof raw.linkUrl === 'string' ? raw.linkUrl : '',
     order: typeof raw.order === 'number' && Number.isFinite(raw.order) ? raw.order : 0,
   }
+
+  const seed = defaultCarousel.find((s) => s.id === slide.id)
+  if (seed && needsCarouselImageUpgrade(slide.imageUrl, seed.imageUrl)) {
+    return {
+      ...slide,
+      imageUrl: seed.imageUrl,
+      title: seed.title || slide.title,
+      subtitle: seed.subtitle || slide.subtitle,
+      linkUrl: seed.linkUrl || slide.linkUrl,
+    }
+  }
+
+  return slide
 }
 
 function normalizeContent(raw: Partial<SiteContent> | undefined): SiteContent {
@@ -156,8 +170,8 @@ const LEGACY_TR_COPY: Partial<SiteContent> = {
   heroTitle: 'Yaşam alanınız için seçilmiş mobilya koleksiyonu',
   heroSubtitle:
     '50’den fazla vitrin ürünü, sekiz kategoride zengin teknik özellikler ve paket setleri. Sepete ekleyin, ödeme adımına geçin veya showroom randevusu alın — fiyatlar USD, TL tahmini güncel kur ile.',
-  categorySectionTitle: 'Kategorilere göz atın',
-  categorySectionSubtitle: 'Bir koleksiyona tıklayarak o kategorinin ürünlerine gidin.',
+  categorySectionTitle: 'EMIN’i keşfedin',
+  categorySectionSubtitle: 'Aşağı kaydırın — üretim, malzeme ve hizmet anlayışımızı tanıyın.',
   filterSectionTitle: 'Kategori ve arama',
   catalogSectionTitle: 'Urun vitrini',
   footerText: 'EMIN Mobilya — demo vitrin verisi',

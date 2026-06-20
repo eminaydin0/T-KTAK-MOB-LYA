@@ -24,6 +24,8 @@ import { DenePage } from '../site/pages/DenePage'
 import { GizlilikPage } from '../site/pages/GizlilikPage'
 import { HomePage } from '../site/pages/HomePage'
 import { KvkkPage } from '../site/pages/KvkkPage'
+import { CatalogPage } from '../site/pages/CatalogPage'
+import { PackagesPage } from '../site/pages/PackagesPage'
 import { PackagePage } from '../site/pages/PackagePage'
 import { NotFoundPage } from '../site/pages/NotFoundPage'
 import { ProductDetailPage } from '../site/pages/ProductDetailPage'
@@ -41,6 +43,8 @@ export function AppRoutes() {
         <Route path="iletisim" element={<ContactPage />} />
         <Route path="gizlilik" element={<GizlilikPage />} />
         <Route path="kvkk" element={<KvkkPage />} />
+        <Route path="katalog" element={<CatalogPage />} />
+        <Route path="setler" element={<PackagesPage />} />
         <Route path="paket/:packageSlug" element={<PackagePage />} />
         <Route path="urun/:productSlug" element={<ProductDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />

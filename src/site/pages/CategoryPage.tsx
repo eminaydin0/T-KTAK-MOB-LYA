@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
+import { Reveal } from '../../components/motion'
 import {
   categorySeoDescription,
   findCategoryByParam,
@@ -11,6 +12,7 @@ import { useExchangeRate } from '../../lib/useExchangeRate'
 import { formatUsdAndTry } from '../../shared/formatPrice'
 import { CatalogPagination } from '../components/CatalogPagination'
 import { CatalogToolbar } from '../components/CatalogToolbar'
+import { ProductCardGrid, ProductCardGridItem } from '../components/ProductCardGrid'
 import { SiteProductCard } from '../components/SiteProductCard'
 import { SiteSeo } from '../seo/SiteSeo'
 import { absoluteUrl, truncateMeta } from '../seo/seoHelpers'
@@ -152,7 +154,7 @@ export function CategoryPage() {
         jsonLd={jsonLd}
       />
 
-      <div className="site-enter pb-16">
+      <div className="pb-16">
         <nav className="site-breadcrumb mb-8" aria-label="Sayfa yolu">
           <Link to={homePath()} className="site-link">
             Ana sayfa
@@ -169,7 +171,7 @@ export function CategoryPage() {
           <span className="font-medium text-ink">{category.name}</span>
         </nav>
 
-        <div className="site-card overflow-hidden">
+        <Reveal className="site-card overflow-hidden">
           {category.imageUrl?.trim() ? (
             <div className="relative h-44 sm:h-52">
               <img
@@ -191,9 +193,9 @@ export function CategoryPage() {
               Tüm katalog
             </Link>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="mt-12">
+        <Reveal className="mt-12" delay={0.08}>
           <CatalogToolbar
             sort={sort}
             stock={stock}
@@ -216,28 +218,29 @@ export function CategoryPage() {
             </div>
           ) : (
             <>
-              <div className="home-product-grid">
+              <ProductCardGrid>
                 {paged.items.map((product) => {
                   const price = formatUsdAndTry(product.priceUsd, usdToTry)
                   return (
-                    <SiteProductCard
-                      key={product.id}
-                      product={product}
-                      categoryName={category.name}
-                      priceUsd={price.usd}
-                      priceTry={price.tryApprox ?? undefined}
-                      priority={false}
-                    />
+                    <ProductCardGridItem key={product.id}>
+                      <SiteProductCard
+                        product={product}
+                        categoryName={category.name}
+                        priceUsd={price.usd}
+                        priceTry={price.tryApprox ?? undefined}
+                        priority={false}
+                      />
+                    </ProductCardGridItem>
                   )
                 })}
-              </div>
+              </ProductCardGrid>
               <CatalogPagination page={paged.page} totalPages={paged.totalPages} buildHref={buildHref} />
             </>
           )}
-        </div>
+        </Reveal>
 
         {categories.filter((c) => c.id !== category.id).length > 0 ? (
-          <section className="site-card-muted mt-14 px-5 py-6 sm:px-8">
+          <Reveal as="section" className="site-card-muted mt-14 px-5 py-6 sm:px-8" delay={0.12}>
             <h2 className="site-overline text-ink">Diğer koleksiyonlar</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories
@@ -248,7 +251,7 @@ export function CategoryPage() {
                   </Link>
                 ))}
             </div>
-          </section>
+          </Reveal>
         ) : null}
       </div>
     </>

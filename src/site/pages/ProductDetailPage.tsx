@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { Reveal } from '../../components/motion'
 import { findProductByParam, isNumericRouteParam } from '../../core/catalog/catalogSlugs'
 import { productPrimaryImage, STOCK_STATUS_LABEL } from '../../core/catalog/types'
 import { useCart } from '../../core/context/CartContext'
@@ -12,6 +13,7 @@ import { formatUsdAndTry } from '../../shared/formatPrice'
 import { SiteSeo } from '../seo/SiteSeo'
 import { absoluteUrl, productAvailabilitySchema, truncateMeta } from '../seo/seoHelpers'
 import { ProductDetailGallery } from '../components/ProductDetailGallery'
+import { ProductCardGrid, ProductCardGridItem } from '../components/ProductCardGrid'
 import { SiteProductCard } from '../components/SiteProductCard'
 import { catalogAnchor, categoryPath, homePath, packagePath, productPath } from '../sitePaths'
 
@@ -141,7 +143,7 @@ export function ProductDetailPage() {
         jsonLd={jsonLd}
       />
 
-    <div className="site-enter pb-20">
+    <Reveal className="pb-20">
       <nav className="site-breadcrumb mb-6" aria-label="Sayfa yolu">
         <Link to={homePath()} className="site-link">
           Ana sayfa
@@ -344,11 +346,9 @@ export function ProductDetailPage() {
 
         <div className="site-card rounded-t-none border border-t-0 border-line p-5 sm:p-8">
           {tab === 'overview' ? (
-            <div className="max-w-prose space-y-4">
+            <div className="site-prose">
               {product.description.split(/\n\n+/).map((paragraph) => (
-                <p key={paragraph.slice(0, 48)} className="site-body text-base leading-relaxed text-stone-700">
-                  {paragraph.trim()}
-                </p>
+                <p key={paragraph.slice(0, 48)}>{paragraph.trim()}</p>
               ))}
             </div>
           ) : null}
@@ -409,24 +409,25 @@ export function ProductDetailPage() {
           <p className="site-body mt-2">
             {category?.name} kategorisinden diğer seçenekler
           </p>
-          <div className="home-product-grid mt-8">
+          <ProductCardGrid className="mt-8">
             {related.map((p) => {
               const catName = categories.find((c) => c.id === p.categoryId)?.name ?? ''
               const pPrice = formatUsdAndTry(p.priceUsd, usdToTry)
               return (
-                <SiteProductCard
-                  key={p.id}
-                  product={p}
-                  categoryName={catName}
-                  priceUsd={pPrice.usd}
-                  priceTry={pPrice.tryApprox ?? undefined}
-                />
+                <ProductCardGridItem key={p.id}>
+                  <SiteProductCard
+                    product={p}
+                    categoryName={catName}
+                    priceUsd={pPrice.usd}
+                    priceTry={pPrice.tryApprox ?? undefined}
+                  />
+                </ProductCardGridItem>
               )
             })}
-          </div>
+          </ProductCardGrid>
         </section>
       ) : null}
-    </div>
+    </Reveal>
     </>
   )
 }
